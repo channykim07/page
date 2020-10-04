@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="side">
+  <div class="side-item side-search">
+    <input type="text" placeholder="Search">
+  </div>
+  <hr>
+  {% for h1_header, h1_contents in headers[h0].items() %}
+  <a class="side-item side-h1" href="/{{h0}}/{{h1_header}}">{{h1_header}}</a>
+  {% if h1_header == h1 %}
+  {% for h2_header, h3_headers in headers[h0][h1_header].items() %}
+  {% set outer_loop = loop %}
+  <a class="side-item side-h2" href="/{{h0}}/{{h1_header}}/{{h2_header}}"><b>{{outer_loop.index}}. </b>{{h2_header}}</a>
+  {% for h3_header in h3_headers %}
+  <a class="side-item side-h3" href="/{{h0}}/{{h1_header}}/{{h2_header}}/{{h3_header}}"><b>{{outer_loop.index}}.{{loop.index}}. </b>{{h3_header}}</a>
+  {% endfor %}
+  {% endfor %}
+  {% endif %}
+  {% endfor %}
+</div>
+<div class="content">
+  <div class="content-login">
+    {% if current_user and current_user.id %}
+    <p style="display:inline">Hi {{ current_user.id }} </p>
+    <a class="content-login-link" href="/signout">Sign out</a>
+    {% if current_user.class_id == "" %}
+    <a class="content-login-link" href="/premium">Premium</a>
+    {% endif %}
+    {% else %}
+    <a class="content-login-link" href="{{ url_for('signin') }}">Sign in</a>
+    {% endif %}
+  </div>
+  <div class="content-head">
+    {% for h0_header in headers %}
+    {% if h0_header != h0 %}
+    <a class="content-head-h0" href="/{{h0_header}}">{{h0_header}}</a>
+    {% else %}
+    <a class="content-head-h0 current" href="/{{h0_header}}">{{h0_header}}</a>
+    {% endif %}
+    {% endfor %}
+  </div>
+  <div class="content-body">
+    {% for post in posts %}
+    <h2> {{ post["li"] }} </h2>
+    {% for p in post["ps"] %}
+    <p>{{ p | safe }}</p>
+    {% endfor %}
+
+    {% if debug %}
+    {{ display_gist("e7f4b99c5e625651abdeef29e328a423") | safe }}
+    {% endif %}
+
+    {% for g in post["gists"] %}
+    {% if current_user and g not in current_user.unsolved_gist %}
+    {{ display_gist(g) | safe }}
+    {% endif %}
+    {% endfor %}
+
+    {% endfor %}
+  </div>
+</div>
+{% endblock body %}

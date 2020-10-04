@@ -1,0 +1,54 @@
+# [ref] https://github.com/google-github-actions/setup-gcloud/tree/master/example-workflows
+name: hosting
+env:
+  PROJECT_ID: seansdevnote
+  IMAGE_NAME: page
+  RUN_REGION: us-central1
+
+# Controls when the action will run.
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [main]
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron: "0 17 * * *"
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  setup-build-deploy:
+    name: Setup, Build, and Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      # The type of runner that the job will run on
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - uses: google-github-actions/setup-gcloud@master
+        with:
+          version: "290.0.1"
+          project_id: seansdevnote
+          service_account_key: ${{ secrets.SERVICE_ACCOUNT_JSON }}
+
+      - name: Authorize Docker push
+        run: gcloud auth configure-docker
+
+      - name: Build
+        run: |-
+          docker build --build-arg GIT="${{ secrets.GIT }}" \
+                       --build-arg OAUTH="${{ secrets.OAUTH }}" \
+                       --build-arg SERVICE_ACCOUNT="${{ secrets.SERVICE_ACCOUNT }}" \
+                       -t gcr.io/$PROJECT_ID/$IMAGE_NAME:${{ github.sha }} .
+          docker push gcr.io/$PROJECT_ID/$IMAGE_NAME:${{ github.sha }}
+
+      - name: Deploy
+        run: |-
+          gcloud run deploy $IMAGE_NAME \
+            --image gcr.io/$PROJECT_ID/$IMAGE_NAME:${{ github.sha }} \
+            --region $RUN_REGION \
+            --platform "managed" \
+            --service-account firebase-adminsdk-h70pe@seansdevnote.iam.gserviceaccount.com

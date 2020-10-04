@@ -1,0 +1,11 @@
+# Assume python3 -m vent env
+env
+# Credential files
+.env
+token.pickle
+
+page/gist
+page/data
+page/doc/*.json
+
+__pycache__
