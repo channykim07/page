@@ -33,11 +33,6 @@ def clone_files(gist_ids, result_path=PATH.GIST):
     popen.wait()
 
 
-def get_files(gist_id):
-  logger.info(f"get_files({gist_id})")
-  return [f for f in os.listdir(f"{PATH.GIST}/{gist_id}") if f != ".git"]
-
-
 def display_gist(gist_id, doc="py"):
   logger.info(f"display_gist({gist_id}, {doc})")
   result = requests.get(f'https://gist.github.com/{gist_id}.js', headers=get_git_credential()).content

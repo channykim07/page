@@ -14,41 +14,16 @@ import time
 logger = get_logger(__name__)
 
 
-def recommend_problems(kr_names=""):
-  logger.info(f"recommend_problems({kr_names})")
+def get_students(id):
   db = get_db_instance()
-  problems = [doc.to_dict() for doc in db.collection("problem").order_by("h1").get()]
+  students = []
+  for student in db.collection("class").document("prake").get().to_dict()["user_ids"]:
+    students.append(db.collection("user").document(student).get().to_dict())
+  return students
 
-  html = ""
-  for kr_name in kr_names.split(" "):
-    logger.debug(kr_name)
-    student = next(db.collection("user").where("kr_name", "==", kr_name).stream(), {})
-    if student:
-      student = student.to_dict()
-    else:
-      continue
-    html += f"<div style='width: 20%; float: left;'><h2>{student['kr_name']}</h2> <br>"
-    todos = [problem for problem in problems if problem['id'] not in student["solved"] and problem.get("id", "").startswith("BJ")]
-    todos.sort(key=lambda todo: (todo['h1'][4], todo['h2'], todo['h3'], todo["li"], todo['level']))
 
-    h1, h2, h3, li = "", "", "", ""
-    for todo in todos:
-      if h1 != todo["h1"]:
-        h1 = todo["h1"]
-        html += h1 + "<br>"
-      if h2 != todo["h2"]:
-        h2 = todo["h2"]
-        html += h2 + "<br>"
-      if h3 != todo["h3"]:
-        h3 = todo["h3"]
-        html += h3 + "<br>"
-      if li != todo["li"] and todo.get("id", "").startswith("BJ"):
-        li = todo["li"]
-        html += li + "<br>"
-      if 'link' in todo:
-        html += todo['link'] + "<br>"
-    html += "</div>"
-  return html
+def get_solved(id):
+  return db.collection("user").document(id).get().to_dict()["solved"]
 
 
 def enroll_class(class_id, user_id):
@@ -63,8 +38,8 @@ def enroll_class(class_id, user_id):
   db.collection("user").document(user_id).update({"class_id": class_id})
 
 
-def get_solved(baekjoon_id):
-  logger.info(f"get_solved({baekjoon_id})")
+def update_solved(baekjoon_id):
+  logger.info(f"update_solved({baekjoon_id})")
   driver = get_chrome_driver()
 
   try:
@@ -84,7 +59,7 @@ def get_id2solved(limit=10000):
   id2solved = {}
 
   with ThreadPoolExecutor() as ex:
-    future2id = {ex.submit(get_solved, user_dic["bj_id"]): user_dic["id"] for user_dic in user_dics}
+    future2id = {ex.submit(update_solved, user_dic["bj_id"]): user_dic["id"] for user_dic in user_dics}
     for future in as_completed(future2id):
       id = future2id[future]
       id2solved[id] = future.result()

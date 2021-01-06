@@ -15,20 +15,31 @@ from selenium.webdriver.support.ui import Select
 logger = get_logger(__name__)
 
 
-def get_problem_tag(pid, title, level):
-  logger.debug(f"get_problem_tag({pid}, {title}, {level})")
+def display_problem(problem):
+  if 'id' not in problem or 'title' not in problem or 'level' not in problem:
+    return ''
+  pid, title, level = problem['id'], problem['title'], problem['level']
+  logger.debug(f"display_problem({pid}, {title}, {level})")
   if pid[:2] == "BJ":
-    return f'<a href="http://acmicpc.net/problem/{pid[3:]}" style="color:blue;">{title} ({level})</a>'
+    html = f'<a href="http://acmicpc.net/problem/{pid[3:]}" style="color:blue;">{title} ({level})</a>'
   elif pid[:2] == "LC":
-    return f'<a href="http://leetcode.com/problem/{title}" style="color:blue;">{title} ({level})</a>'
+    html = f'<a href="http://leetcode.com/problem/{title}" style="color:blue;">{title} ({level})</a>'
   elif pid[:2] == "KT":
-    return f'<a href="https://open.kattis.com/problems/{pid[3:]}" style="color:blue;">{title} ({level})</a>'
+    html = f'<a href="https://open.kattis.com/problems/{pid[3:]}" style="color:blue;">{title} ({level})</a>'
   else:
-    return f'INVALID'
+    return f''
+  for user in problem.get("unsolved_by", []):
+    html += user + " "
+  return html + "<br>"
 
 
-def get_level_baekjoon(level):
-  logger.info(f"get_level_baekjoon({level})")
+def get_problems(h1, h2, h3):
+  db = get_db_instance()
+  return [prob.to_dict() for prob in db.collection("problem").where('h1', '==', h1).where('h2', '==', h2).where('h3', '==', h3).get()]
+
+
+def update_baekjoon_level(level):
+  logger.info(f"update_baekjoon_level({level})")
   driver = get_chrome_driver()
   db = get_db_instance()
   problems = []
@@ -57,18 +68,18 @@ def get_level_baekjoon(level):
   return problems
 
 
-def get_all_baekjoon(lo=0, hi=31):
-  logger.info(f"get_all_baekjoon({lo}, {hi})")
+def update_baekjoon(lo=0, hi=31):
+  logger.info(f"update_baekjoon({lo}, {hi})")
   docs = []
   with ThreadPoolExecutor() as ex:
-    future2level = {ex.submit(get_level_baekjoon, level): level for level in range(lo, hi)}
+    future2level = {ex.submit(update_baekjoon_level, level): level for level in range(lo, hi)}
     for future in as_completed(future2level):
       docs.extend(future.result())
   return docs
 
 
-def get_leetcode(total_count=10000):
-  logger.info(f"get_leetcode({total_count})")
+def update_leetcode(total_count=10000):
+  logger.info(f"update_leetcode({total_count})")
   driver = get_chrome_driver()
   problems = []
 
@@ -92,9 +103,9 @@ def get_leetcode(total_count=10000):
 
 if __name__ == "__main__":
   db = get_db_instance()
-  bj_probs = get_all_baekjoon()
+  bj_probs = update_baekjoon()
   for prob in bj_probs:
     db.collection("problem").document(prob["id"]).set(prob, merge=True)
-  lc_probs = get_leetcode()
+  lc_probs = update_leetcode()
   for prob in lc_probs:
     db.collection("problem").document(prob['id']).set(prob, merge=True)

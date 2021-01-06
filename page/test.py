@@ -3,8 +3,8 @@ import shutil
 import os
 from .api.doc import get_pages, get_header, download_html, html2json
 from .api.gist import clone_files, display_gist
-from .api.problem import get_leetcode, get_level_baekjoon, get_all_baekjoon
-from .api.student import get_solved, get_id2solved
+from .api.problem import update_leetcode, update_baekjoon_level, update_baekjoon, get_problems
+from .api.student import update_solved, get_id2solved, get_students
 from .common import PATH, get_chrome_driver, get_db_instance, get_logger
 
 logger = get_logger(__name__)
@@ -34,14 +34,15 @@ class PageTester(unittest.TestCase):
 
   def test_problem(self):
     logger.debug("Test problem")
-    self.assertGreater(len(get_level_baekjoon(30)), 5, "Failted to get baekjoon")
-    self.assertGreater(len(get_all_baekjoon(28, 31)), 50, "Failed to get baekjoon")
-    self.assertEqual(len(get_leetcode(3)), 3, "Failed to get leetcode")
+    self.assertGreater(len(update_baekjoon_level(30)), 5, "Failted to get baekjoon")
+    self.assertGreater(len(update_baekjoon(28, 31)), 50, "Failed to get baekjoon")
+    self.assertEqual(len(update_leetcode(3)), 3, "Failed to get leetcode")
+    self.assertGreater(get_problems("Syntax", "IO", "Print"), 3)
 
   def test_doc(self):
     logger.debug("Test doc")
-    pages = get_pages()
-    self.assertNotEqual(pages, 0, "Failed to get pages from firebase")
+    pages = get_pages(3)
+    self.assertEqual(len(pages), 3, "Failed to get pages from firebase")
     page = pages[-1]
 
     html = download_html(page["doc_id"], page["id"], PATH.TEST)
@@ -63,15 +64,15 @@ class PageTester(unittest.TestCase):
 
   def test_student(self):
     logger.debug("Test students")
-    self.assertGreater(len(get_solved("rbtmd1010")), 100, "Failed to crawl solved problems")
+    self.assertGreater(len(update_solved("rbtmd1010")), 100, "Failed to crawl solved problems")
     self.assertEqual(len(get_id2solved(3).keys()), 3, "Failed to get all solved")
+    self.assertGreater(len(get_students("prake")), 10, "Failed to get prake students")
 
 
 if __name__ == '__main__':
   # run single_test
-  # suite = unittest.TestSuite()
-  # suite.addTest(PageTester("test_problem"))
-  # suite.addTest(PageTester("test_student"))
-  # runner = unittest.TextTestRunner()
-  # runner.run(suite)
-  unittest.main()
+  suite = unittest.TestSuite()
+  suite.addTest(PageTester("test_new"))
+  runner = unittest.TextTestRunner()
+  runner.run(suite)
+  # unittest.main()

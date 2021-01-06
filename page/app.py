@@ -7,9 +7,10 @@ from oauthlib.oauth2 import WebApplicationClient
 
 from .user import User
 from .common import PATH, get_logger, get_oauth_credential
-from .api.student import enroll_class, recommend_problems
+from .api.student import enroll_class, get_students
 from .api.doc import get_header, get_post
 from .api.gist import display_gist
+from .api.problem import display_problem, get_problems
 
 
 def deployment():
@@ -23,30 +24,49 @@ def deployment():
 
   GOOGLE_DISCOVERY_URL = "https://accounts.google.com/.well-known/openid-configuration"
   app.jinja_env.globals.update(display_gist=display_gist)  # use python function inside jinja
+  app.jinja_env.globals.update(display_problem=display_problem)
 
   @login_manager.user_loader
   def load_user(id):
     return User.get(id)
 
-  @app.route("/admin", methods=["POST", "GET"])
-  def admin():
-    if request.method == 'POST':
-      return render_template("admin.html", students=recommend_problems(kr_names=request.form["nm"]))
-    return render_template("admin.html")
+  @app.route("/admin/<string:class_id>", methods=["POST", "GET"])
+  def admin(class_id):
+    headers = get_header()["Python"]
+    html = ""
+    students = get_students(class_id)
+    students.sort(key=lambda student: len(student["solved"]))
+    for student in students:
+      student["solved"] = set(student["solved"])
+
+    for h1 in ["Syntax", "Algorithm"]:
+      html += f"<h1>{h1}</h1>"
+      for h2 in headers[h1]:
+        html += f"<h2>{h2}</h2>"
+        for h3 in headers[h1][h2]:
+          html += f"<h3>{h3}</h3>"
+          for problem in get_problems(h1, h2, h3):
+            problem["unsolved_by"] = []
+            for student in students:
+              if "kr_name" in student and problem.get("id", "") not in student["solved"]:
+                problem["unsolved_by"].append(student["kr_name"])
+            html += display_problem(problem)
+
+    return render_template("admin.html", progress_overview_html=html)
 
   @app.route("/premium", methods=["POST", "GET"])
-  def premium():
+  def premium(class_id):
     if request.method == 'POST':
       class_id = request.form["class_id"]
       enroll_class(current_user.id, class_id)
       return render_template("index.html", headers=get_header(), h0="", h1="", posts={})
     return render_template("premium.html")
 
-  @app.route("/", methods=["GET"])
-  @app.route("/<string:h0>/", methods=["GET"])
-  @app.route("/<string:h0>/<string:h1>/", methods=["GET"])
-  @app.route("/<string:h0>/<string:h1>/<string:h2>", methods=["GET"])
-  @app.route("/<string:h0>/<string:h1>/<string:h2>/<string:h3>", methods=["GET"])
+  @app.route("/page/", methods=["GET"])
+  @app.route("/page/<string:h0>/", methods=["GET"])
+  @app.route("/page/<string:h0>/<string:h1>/", methods=["GET"])
+  @app.route("/page/<string:h0>/<string:h1>/<string:h2>", methods=["GET"])
+  @app.route("/page/<string:h0>/<string:h1>/<string:h2>/<string:h3>", methods=["GET"])
   def index(h0="Python", h1="", h2="", h3=""):
     logger.debug(f"Opening {h0}/{h1}/{h2}/{h3} in {PATH.DOC}/{h0}.json")
 
@@ -100,7 +120,8 @@ def production():
   from livereload import Server
 
   app = Flask(__name__)
-  app.jinja_env.globals.update(display_gist=display_gist)
+  app.jinja_env.globals.update(display_gist=display_gist)  # use python function inside jinja
+  app.jinja_env.globals.update(display_problem=display_problem)
 
   @app.route("/", methods=["GET"])
   def index():
@@ -111,8 +132,25 @@ def production():
 
   @app.route("/signin", methods=["GET"])
   def signin():
-    return render_template("practice.html")
+    headers = get_header()["Python"]
+    html = ""
+    students = get_students("prake")
+    for student in students:
+      student["solved"] = set(student["solved"])
 
-  server = Server(app.wsgi_app)
-  server.serve(debug=True)
+    for h1 in ["Syntax", "Algorithm"]:
+      html += f"<h1>{h1}</h1>"
+      for h2 in headers[h1]:
+        html += f"<h2>{h2}</h2>"
+        for h3 in headers[h1][h2]:
+          html += f"<h3>{h3}</h3>"
+          for problem in get_problems(h1, h2, h3):
+            problem["unsolved_by"] = []
+            for student in students:
+              if "kr_name" in student and problem.get("id", "") not in student["solved"]:
+                problem["unsolved_by"].append(student["kr_name"])
+            html += display_problem(problem)
+
+    return render_template("admin.html", progress_overview_html=html)
+
   return app

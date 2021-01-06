@@ -21,9 +21,10 @@ from functools import lru_cache
 logger = get_logger(__name__)
 
 
-def get_pages():
+def get_pages(limit=30):
+  logger.info("get_pages()")
   db = get_db_instance()
-  pages = [f.to_dict() for f in db.collection("doc").get()]
+  pages = [f.to_dict() for f in islice(db.collection("doc").get(), limit)]
   logger.info(f"{pages}")
   return pages
 
@@ -137,6 +138,8 @@ def get_post(doc, h1, h2, h3):
     logger.warning(f"while openning {doc} {h1} {h2} {h3}")
   logger.debug(f"{post}")
   return post
+
+def search_doc():
 
 
 if __name__ == '__main__':

@@ -6,13 +6,15 @@
   </div>
   <hr>
   {% for h1_header, h1_contents in headers[h0].items() %}
-  <a class="side-item side-h1" href="/{{h0}}/{{h1_header}}">{{h1_header}}</a>
+  <a class="side-item side-h1" href="/page/{{h0}}/{{h1_header}}">{{h1_header}}</a>
   {% if h1_header == h1 %}
   {% for h2_header, h3_headers in headers[h0][h1_header].items() %}
   {% set outer_loop = loop %}
-  <a class="side-item side-h2" href="/{{h0}}/{{h1_header}}/{{h2_header}}"><b>{{outer_loop.index}}. </b>{{h2_header}}</a>
+  <a class="side-item side-h2" href="/page/{{h0}}/{{h1_header}}/{{h2_header}}">
+    <b>{{outer_loop.index}}. </b>{{h2_header}}</a>
   {% for h3_header in h3_headers %}
-  <a class="side-item side-h3" href="/{{h0}}/{{h1_header}}/{{h2_header}}/{{h3_header}}"><b>{{outer_loop.index}}.{{loop.index}}. </b>{{h3_header}}</a>
+  <a class="side-item side-h3" href="/page/{{h0}}/{{h1_header}}/{{h2_header}}/{{h3_header}}">
+    <b>{{outer_loop.index}}.{{loop.index}}. </b>{{h3_header}}</a>
   {% endfor %}
   {% endfor %}
   {% endif %}
@@ -33,9 +35,9 @@
   <div class="content-head">
     {% for h0_header in headers %}
     {% if h0_header != h0 %}
-    <a class="content-head-h0" href="/{{h0_header}}">{{h0_header}}</a>
+    <a class="content-head-h0" href="/page/{{h0_header}}">{{h0_header}}</a>
     {% else %}
-    <a class="content-head-h0 current" href="/{{h0_header}}">{{h0_header}}</a>
+    <a class="content-head-h0 current" href="/page/{{h0_header}}">{{h0_header}}</a>
     {% endif %}
     {% endfor %}
   </div>
