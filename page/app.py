@@ -62,6 +62,7 @@ def deployment():
       return render_template("index.html", headers=get_header(), h0="", h1="", posts={})
     return render_template("premium.html")
 
+  @app.route("/", methods=["GET"])
   @app.route("/page/", methods=["GET"])
   @app.route("/page/<string:h0>/", methods=["GET"])
   @app.route("/page/<string:h0>/<string:h1>/", methods=["GET"])

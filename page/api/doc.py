@@ -96,7 +96,6 @@ def html2json(html):
               db.collection("problem").document(pid).update({"h1": cur_h1, "h2": cur_h2, "h3": cur_h3, "li": cur_li, "gist_id": gist_id})
           except Exception as e:
             logger.warning(str(e))
-            logger.warning(file_name)
         # CASE 3: [FORM] MH_Exponent
         elif tag.text.startswith("[FORM]"):
           form_id = tag.next.next.attrs["href"].split("/")[-2]
@@ -138,8 +137,6 @@ def get_post(doc, h1, h2, h3):
     logger.warning(f"while openning {doc} {h1} {h2} {h3}")
   logger.debug(f"{post}")
   return post
-
-def search_doc():
 
 
 if __name__ == '__main__':

@@ -5,7 +5,7 @@ from .api.doc import get_pages, get_header, download_html, html2json
 from .api.gist import clone_files, display_gist
 from .api.problem import update_leetcode, update_baekjoon_level, update_baekjoon, get_problems
 from .api.student import update_solved, get_id2solved, get_students
-from .common import PATH, get_chrome_driver, get_db_instance, get_logger
+from .common import *
 
 logger = get_logger(__name__)
 
@@ -23,6 +23,9 @@ class PageTester(unittest.TestCase):
   def test_common(self):
     logger.debug("Test common")
     driver = get_chrome_driver()
+    self.assertIsNotNone(get_oauth_credential())
+    self.assertIsNotNone(get_git_credential())
+    self.assertIsNotNone(get_service_account_credential())
     self.assertIsNotNone(driver, "Failed to get Chrome Driver")
 
     db = get_db_instance()
@@ -37,7 +40,7 @@ class PageTester(unittest.TestCase):
     self.assertGreater(len(update_baekjoon_level(30)), 5, "Failted to get baekjoon")
     self.assertGreater(len(update_baekjoon(28, 31)), 50, "Failed to get baekjoon")
     self.assertEqual(len(update_leetcode(3)), 3, "Failed to get leetcode")
-    self.assertGreater(get_problems("Syntax", "IO", "Print"), 3)
+    self.assertGreater(len(get_problems("Syntax", "IO", "Print")), 3)
 
   def test_doc(self):
     logger.debug("Test doc")
@@ -71,8 +74,8 @@ class PageTester(unittest.TestCase):
 
 if __name__ == '__main__':
   # run single_test
-  suite = unittest.TestSuite()
-  suite.addTest(PageTester("test_new"))
-  runner = unittest.TextTestRunner()
-  runner.run(suite)
-  # unittest.main()
+  # suite = unittest.TestSuite()
+  # suite.addTest(PageTester("test_new"))
+  # runner = unittest.TextTestRunner()
+  # runner.run(suite)
+  unittest.main()

@@ -9,6 +9,8 @@ from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 from firebase_admin import credentials, firestore, initialize_app
 from threading import Lock
+from dotenv import load_dotenv
+
 
 lock = Lock()
 
@@ -20,6 +22,7 @@ class PATH:
   CRED = SRC / 'cred'
   GIST = SRC / 'gist'
   TEST = SRC / 'test'
+  ENV = SRC / '..' / '.env'
   Path(DOC).mkdir(exist_ok=True)
   Path(GIST).mkdir(exist_ok=True)
 
@@ -36,6 +39,9 @@ def get_logger(name, level=logging.INFO):  # WARNING 30, INFO 20, DEBUG 10
 
 
 def get_service_account_credential():
+  load_dotenv(dotenv_path=PATH.ENV)
+  if "SERVICE_ACCOUNT" not in os.environ:
+    return
   with open(f"{PATH.CRED}/service_account.json", "r") as f:
     service_cred = json.load(f)
   service_cred["private_key"] = os.environ["SERVICE_ACCOUNT"].replace("\\n", "\n")
@@ -43,6 +49,9 @@ def get_service_account_credential():
 
 
 def get_git_credential():
+  load_dotenv(dotenv_path=PATH.ENV)
+  if "GIT" not in os.environ:
+    return
   with open(f"{PATH.CRED}/git.json", "r") as f:
     git_cred = json.load(f)
   git_cred["Authorization"] = os.environ['GIT']
@@ -50,6 +59,9 @@ def get_git_credential():
 
 
 def get_oauth_credential():
+  load_dotenv(dotenv_path=PATH.ENV)
+  if "OAUTH" not in os.environ:
+    return
   with open(f"{PATH.CRED}/oauth.json", "r") as f:
     oauth_cred = json.load(f)
   oauth_cred["client_secret"] = os.environ["OAUTH"]

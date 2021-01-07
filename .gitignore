@@ -8,4 +8,6 @@ page/gist
 page/data
 page/doc/*.json
 
+simple_demo
+
 __pycache__
