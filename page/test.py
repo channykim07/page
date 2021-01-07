@@ -1,78 +1,65 @@
+import concurrent.futures
 import unittest
 import shutil
 import os
-from .api.doc import get_pages, get_header, download_html, html2json
-from .api.gist import clone_files, display_gist
-from .api.problem import update_leetcode, update_baekjoon_level, update_baekjoon, get_problems
-from .api.student import update_solved, get_id2solved, get_students
-from .common import PATH, get_chrome_driver, get_db_instance, get_logger
-
-logger = get_logger(__name__)
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from .models.team import Team
+from .models.doc import Doc
+from .models.member import Member
+from .models.gist import Gist
+from .models.problem import Problem
+from .models.mock import Mock
+from .database import remote_db, local_db
+from .common import *
+from google.cloud import firestore
 
 
 class PageTester(unittest.TestCase):
-  def setUp(self):
-    logger.debug("Setting up")
-    shutil.rmtree(PATH.TEST, ignore_errors=True)
-    os.mkdir(PATH.TEST)
+  def test_database(self):
+    logger.debug("test_database()")
+    self.assertIsNotNone(get_oauth_credential())
+    self.assertIsNotNone(get_git_credential())
+    self.assertIsNotNone(get_service_account_credential())
+    self.assertIsNotNone(remote_db)
 
-  def tearDown(self):
-    logger.debug("Tearing down")
-    shutil.rmtree(PATH.TEST)
+    mock = Mock("sample")
+    self.assertIsNotNone(remote_db.add("mock", mock, overwrite=True))
+    self.assertFalse(remote_db.add("mock", mock, overwrite=False))
+    self.assertEqual(remote_db.get("mock", "sample"), remote_db.get("mock")[0], mock)
+    self.assertTrue(remote_db.delete("mock", "sample"))
+    self.assertIsNone(remote_db.get("mock", "sample"))
 
-  def test_common(self):
-    logger.debug("Test common")
-    driver = get_chrome_driver()
-    self.assertIsNotNone(driver, "Failed to get Chrome Driver")
+    self.assertIsNotNone(local_db.add("mock", mock, overwrite=True))
+    self.assertFalse(local_db.add("mock", mock, overwrite=False))
+    self.assertEqual(local_db.get("mock", "sample"), local_db.get("mock")[0],  mock)
+    self.assertTrue(local_db.delete("mock", "sample"))
+    self.assertIsNone(local_db.get("mock", "sample"))
 
-    db = get_db_instance()
-    self.assertIsNotNone(db, "Failed to get Chrome Driver")
+  def test_models(self):
+    logger.debug("test_models()")
+    self.assertIsNotNone(get_chrome_driver())
+    self.assertEqual(len(Problem.get_leetcode_problems(3)), 3)
+    self.assertGreater(len(Problem.get_baekjoon_problems_level(30)), 5)
+    self.assertGreater(len(Problem.get_baekjoon_problems(28, 31)), 50)
+    self.assertTrue(Member.update_baekjoon_solved(remote_db.get("member", "rbtmd1010")))
+    self.assertTrue(Member.update_all_baekjoon_solved([member for member in remote_db.get("member") if len(member.baekjoon_id) != 0], 2))
 
-    sample_doc = {"id": "id", "title": "title"}
-    db.collection("test").document(sample_doc["id"]).set(sample_doc, merge=True)
-    self.assertEqual(db.collection("test").document(sample_doc["id"]).get().to_dict(), sample_doc, "Failed to get")
+    gist = Gist.get_gist("e7f4b99c5e625651abdeef29e328a423")
+    self.assertGreater(len(gist.html), 100)
+    self.assertTrue(Gist.get_all_gist(["c81940d03e79296936616c733d2b4f57", "e7f4b99c5e625651abdeef29e328a423"]))
 
-  def test_problem(self):
-    logger.debug("Test problem")
-    self.assertGreater(len(update_baekjoon_level(30)), 5, "Failted to get baekjoon")
-    self.assertGreater(len(update_baekjoon(28, 31)), 50, "Failed to get baekjoon")
-    self.assertEqual(len(update_leetcode(3)), 3, "Failed to get leetcode")
-    self.assertGreater(get_problems("Syntax", "IO", "Print"), 3)
+    self.assertIsNotNone(Doc.get_doc("C++", "1dtPPhF9V5z5-mG44ixMHMrEK7j8QkEOVV_XLOWxO060"))
 
-  def test_doc(self):
-    logger.debug("Test doc")
-    pages = get_pages(3)
-    self.assertEqual(len(pages), 3, "Failed to get pages from firebase")
-    page = pages[-1]
-
-    html = download_html(page["doc_id"], page["id"], PATH.TEST)
-
-    self.assertGreater(len(html), 300, "Failed to download html")
-    doc_json = html2json(html)
-    self.assertIsNotNone(doc_json, "Failed to convert to json")
-    headers = get_header()
-    self.assertIsNotNone(headers, "Header is empty")
-
-  def test_gist(self):
-    logger.debug("Test gist")
-    sample_gist = "e7f4b99c5e625651abdeef29e328a423"
-    clone_files(sample_gist, PATH.TEST)
-    self.assertGreater(len(os.listdir(PATH.TEST / sample_gist)), 1, "Clone failed")
-
-    html = display_gist(sample_gist)
-    self.assertGreater(len(html), 100, "Failed to convert html")
-
-  def test_student(self):
-    logger.debug("Test students")
-    self.assertGreater(len(update_solved("rbtmd1010")), 100, "Failed to crawl solved problems")
-    self.assertEqual(len(get_id2solved(3).keys()), 3, "Failed to get all solved")
-    self.assertGreater(len(get_students("prake")), 10, "Failed to get prake students")
+  def test_new(self):
+    pass
+    # Member.update_all_baekjoon_solved([member for member in remote_db.get("member") if len(member.baekjoon_id) != 0])
 
 
 if __name__ == '__main__':
   # run single_test
-  suite = unittest.TestSuite()
-  suite.addTest(PageTester("test_new"))
-  runner = unittest.TextTestRunner()
-  runner.run(suite)
-  # unittest.main()
+  # suite = unittest.TestSuite()
+  # suite.addTest(PageTester("test_new"))
+  # runner = unittest.TextTestRunner()
+  # runner.run(suite)
+
+  unittest.main()

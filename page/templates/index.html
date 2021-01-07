@@ -5,16 +5,16 @@
     <input type="text" placeholder="Search">
   </div>
   <hr>
-  {% for h1_header, h1_contents in headers[h0].items() %}
-  <a class="side-item side-h1" href="/page/{{h0}}/{{h1_header}}">{{h1_header}}</a>
-  {% if h1_header == h1 %}
-  {% for h2_header, h3_headers in headers[h0][h1_header].items() %}
+  {% for h1, h1_contents in headers[cur_doc_id].items() %}
+  <a class="side-item side-h1" href="/page/{{cur_doc_id}}/{{h1}}">{{h1}}</a>
+  {% if h1 == cur_h1 %}
+  {% for h2, h3s in headers[cur_doc_id][h1].items() %}
   {% set outer_loop = loop %}
-  <a class="side-item side-h2" href="/page/{{h0}}/{{h1_header}}/{{h2_header}}">
-    <b>{{outer_loop.index}}. </b>{{h2_header}}</a>
-  {% for h3_header in h3_headers %}
-  <a class="side-item side-h3" href="/page/{{h0}}/{{h1_header}}/{{h2_header}}/{{h3_header}}">
-    <b>{{outer_loop.index}}.{{loop.index}}. </b>{{h3_header}}</a>
+  <a class="side-item side-h2" href="/page/{{cur_doc_id}}/{{h1}}/{{h2}}">
+    <b>{{outer_loop.index}}. </b>{{h2}}</a>
+  {% for h3 in h3s %}
+  <a class="side-item side-h3" href="/page/{{cur_doc_id}}/{{h1}}/{{h2}}/{{h3}}">
+    <b>{{outer_loop.index}}.{{loop.index}}. </b>{{h3}}</a>
   {% endfor %}
   {% endfor %}
   {% endif %}
@@ -33,29 +33,23 @@
     {% endif %}
   </div>
   <div class="content-head">
-    {% for h0_header in headers %}
-    {% if h0_header != h0 %}
-    <a class="content-head-h0" href="/page/{{h0_header}}">{{h0_header}}</a>
+    {% for doc_id in headers %}
+    {% if doc_id != cur_doc_id %}
+    <a class="content-head-doc_id" href="/page/{{doc_id}}">{{doc_id}}</a>
     {% else %}
-    <a class="content-head-h0 current" href="/page/{{h0_header}}">{{h0_header}}</a>
+    <a class="content-head-doc_id current" href="/page/{{doc_id}}">{{doc_id}}</a>
     {% endif %}
     {% endfor %}
   </div>
   <div class="content-body">
-    {% for post in posts %}
-    <h2> {{ post["li"] }} </h2>
-    {% for p in post["ps"] %}
+    {% for content in contents %}
+    <h2> {{ content["li"] }} </h2>
+    {% for p in content["ps"] %}
     <p>{{ p | safe }}</p>
     {% endfor %}
 
-    {% if debug %}
-    {{ display_gist("e7f4b99c5e625651abdeef29e328a423") | safe }}
-    {% endif %}
-
-    {% for g in post["gists"] %}
-    {% if current_user and g not in current_user.unsolved_gist %}
+    {% for g in content["gists"] %}
     {{ display_gist(g) | safe }}
-    {% endif %}
     {% endfor %}
 
     {% endfor %}
