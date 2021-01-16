@@ -27,4 +27,4 @@ RUN [ "$TEST" = true ] || python -m page.models.problem
 RUN [ "$TEST" = true ] || python -m page.models.doc
 RUN [ "$TEST" = true ] || python -m page.models.gist
 
-CMD gunicorn --bind :$PORT --workers 1 --threads 8 "page.app:get_app()";
+CMD gunicorn --bind :$PORT --workers 1 --threads 8 "page.app:create_app()";

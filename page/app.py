@@ -11,7 +11,7 @@ from flask_login import LoginManager, current_user, login_required, login_user, 
 from oauthlib.oauth2 import WebApplicationClient
 
 
-def get_app():
+def create_app():
   app = Flask(__name__)
   app.secret_key = "page"
 
@@ -24,7 +24,6 @@ def get_app():
   def inject_global():
     logger.debug("inject_global")
     headers = {doc.doc_id: doc.headers for doc in local_db.get("doc")}
-    logger.debug(headers)
     return dict(headers=headers)
 
   @login_manager.user_loader
@@ -62,7 +61,7 @@ def get_app():
     if request.method == 'POST':
       current_user.team_id = request.form["team_id"]
       remote_db.add("memeber", current_user)
-      return render_template("index.html", cur_doc_id="", h1="", contents=[])
+      return redirect(url_for("index"))
     return render_template("premium.html")
 
   @app.route("/", methods=["GET"])
@@ -74,6 +73,9 @@ def get_app():
   def index(cur_doc_id="Python", cur_h1="", cur_h2="", cur_h3=""):
     logger.debug(f"index({cur_doc_id}, {cur_h1}, {cur_h2}, {cur_h3})")
     doc = local_db.get("doc", cur_doc_id)
+    if cur_h1 == "":
+      cur_h1 = next(iter(doc.headers))
+      return redirect(f"/page/{cur_doc_id}/{cur_h1}")
     contents = filter(lambda content: content["h1"] == cur_h1 and content["h2"] == cur_h2 and content["h3"] == cur_h3, doc.contents)
 
     return render_template("index.html", cur_doc_id=cur_doc_id, cur_h1=cur_h1, contents=contents)
@@ -99,9 +101,7 @@ def get_app():
     client.parse_request_body_response(json.dumps(token_response.json()))
     userinfo_endpoint = requests.get(GOOGLE_DISCOVERY_URL).json()["userinfo_endpoint"]
     uri, headers, body = client.add_token(userinfo_endpoint)
-
-    if "http:" in uri:
-      uri = "https:" + uri[5:]
+    uri = uri.replace("http:", "https:")
 
     userinfo_response = requests.get(uri, headers=headers, data=body).json()
 
@@ -113,18 +113,14 @@ def get_app():
 
   @app.route("/signout", methods=["POST", "GET"])
   def signout():
-    logger.debug("signout")
+    logger.debug("signout()")
     logout_user()
     return redirect(url_for("index"))
-
-  if os.environ.get("DEBUG"):
-    server = Server(app.wsgi_app)
-    server.serve(debug=True)
 
   return app
 
 
 if __name__ == "__main__":
-  app = get_app()
+  app = create_app()
   server = Server(app.wsgi_app)
   server.serve(debug=True)

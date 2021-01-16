@@ -15,6 +15,7 @@ import time
 
 class Member(UserMixin):
   def __init__(self, member_id, baekjoon_id="", team_id="", en_name="", kr_name="", solved_problem_ids=None, is_admin=False):
+    self.id = member_id  # for flask_login mixin
     self.member_id = member_id
     self.baekjoon_id = baekjoon_id
     self.team_id = team_id

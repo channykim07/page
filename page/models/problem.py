@@ -19,9 +19,6 @@ class Problem():
     self.link = link
     self.gist_id = gist_id
 
-  def __repr__(self):
-    return str(self.__dict__)
-
   @classmethod
   def get_baekjoon_problems_level(cls, level):
     logger.debug(f"get_baekjoon_problems_level({level})")

@@ -2,6 +2,9 @@ import concurrent.futures
 import unittest
 import shutil
 import os
+import requests
+import threading
+import multiprocessing
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from .models.team import Team
 from .models.doc import Doc
@@ -11,10 +14,12 @@ from .models.problem import Problem
 from .models.mock import Mock
 from .database import remote_db, local_db
 from .common import *
-from google.cloud import firestore
+from .app import create_app
+from flask import url_for
 
 
 class PageTester(unittest.TestCase):
+
   def test_database(self):
     logger.debug("test_database()")
     self.assertIsNotNone(get_oauth_credential())
@@ -50,9 +55,17 @@ class PageTester(unittest.TestCase):
 
     self.assertIsNotNone(Doc.get_doc("C++", "1dtPPhF9V5z5-mG44ixMHMrEK7j8QkEOVV_XLOWxO060"))
 
+  def test_ui(self):
+    logger.debug("test_ui()")
+    app = create_app()
+    download_thread = threading.Thread(target=app.run, kwargs={'port': os.environ.get("PORT"), 'use_reloader': False}, daemon=True)
+    download_thread.start()
+
+    self.assertEqual(requests.get(f"http://127.0.0.1:{os.environ.get('PORT')}/wrong").status_code, 404)
+    self.assertEqual(requests.get(f"http://127.0.0.1:{os.environ.get('PORT')}/").status_code, 200)
+
   def test_new(self):
-    pass
-    # Member.update_all_baekjoon_solved([member for member in remote_db.get("member") if len(member.baekjoon_id) != 0])
+    self.test_ui()
 
 
 if __name__ == '__main__':
