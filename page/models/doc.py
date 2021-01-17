@@ -13,13 +13,19 @@ from google.auth.transport.requests import Request
 from apiclient.discovery import build
 from oauth2client.service_account import ServiceAccountCredentials
 
+doc_id2extensions = {
+    "Python": ["type-python"],
+    "Javascript": ["type-shell"],
+}
+
 
 class Doc:
-  def __init__(self, doc_id="", file_id="", headers=None, contents=None):
+  def __init__(self, doc_id="", file_id="", headers=None, contents=None, extensions=None):
     self.doc_id = doc_id
     self.file_id = file_id
     self.headers = headers or {}
     self.contents = contents or []
+    self.extensions = extensions or []
 
   @classmethod
   def get_doc(cls, doc_id, file_id):
@@ -27,6 +33,7 @@ class Doc:
     doc = Doc(doc_id, file_id)
     html = Doc.get_html(doc_id, file_id)
     doc.headers, doc.contents = Doc.html2headers_contents(html)
+    doc.extensions = doc_id2extensions.get(doc_id, [])
     return doc
 
   @staticmethod
@@ -84,7 +91,7 @@ class Doc:
             try:
               line = tag.text[:tag.text.find("#")].strip()  # remove comment
               _, file_name = line.split(" ", 1)
-              # https://www.google.com/url?q=https://gist.github.com/ef6b0f8aae30418b919c865e461ed0a9&sa=D&ust=1610638535418000&usg=AOvVaw2d54EQAi5OUwl9yfzUZxy0
+              # https://gist.github.com/ef6b0f8aae30418b919c865e461ed0a9&sa=D&ust=1610638535418000&usg=AOvVaw2d54EQAi5OUwl9yfzUZxy0
               gist_id = tag.next.next.attrs["href"].split("/")[-1]
               gist_id = gist_id[:gist_id.find("&")]
               gist_ids.append(gist_id)

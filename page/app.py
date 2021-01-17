@@ -2,6 +2,8 @@ import requests
 import json
 import os
 
+from bs4 import BeautifulSoup
+from .models.gist import Gist
 from .models.member import Member
 from .common import PATH, logger, oauth_credential
 from .database import remote_db, local_db
@@ -14,6 +16,26 @@ from oauthlib.oauth2 import WebApplicationClient
 def create_app():
   app = Flask(__name__)
   app.secret_key = "page"
+
+  def display_p(p):
+    logger.info(p)
+    if "# " in p:
+      left, right = p.rsplit("#", 1)
+      return f'<span class="left">{left}</span><span class="right"># {right}</span>'
+    elif p.startswith("> "):
+      return f"<blockquote>{p[2:]}</blockquote>"
+    else:
+      return p
+
+  def display_gist(gist_id, cur_doc_id):
+    html = local_db.get("gist", gist_id).html
+    # [TODO] hide all other files
+    # for d in BeautifulSoup(html, "html.parser").find_all(class_="file"):
+    #   d["style"] = f"display: none"
+    return html
+
+  app.jinja_env.globals.update(display_p=display_p)
+  app.jinja_env.globals.update(display_gist=display_gist)
 
   login_manager = LoginManager()
   login_manager.init_app(app)
@@ -57,12 +79,16 @@ def create_app():
     return render_template("admin.html", progress_overview_html=html)
 
   @app.route("/premium", methods=["POST", "GET"])
-  def premium(team_id):
+  def premium():
     if request.method == 'POST':
       current_user.team_id = request.form["team_id"]
       remote_db.add("memeber", current_user)
       return redirect(url_for("index"))
     return render_template("premium.html")
+
+  @app.route("/practice", methods=["GET"])
+  def practice():
+    return render_template("practice.html")
 
   @app.route("/", methods=["GET"])
   @app.route("/page/", methods=["GET"])

@@ -45,11 +45,11 @@
     {% for content in contents %}
     <h2> {{ content["li"] }} </h2>
     {% for p in content["ps"] %}
-    <p>{{ p | safe }}</p>
+    <p>{{ display_p(p) | safe }}</p>
     {% endfor %}
 
-    {% for g in content["gists"] %}
-    {{ display_gist(g) | safe }}
+    {% for g in content["gist_ids"] %}
+    {{ display_gist(g, cur_doc_id) | safe }}
     {% endfor %}
 
     {% endfor %}

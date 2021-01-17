@@ -19,7 +19,7 @@ class PATH:
   ENV = SRC / '..' / '.env'
 
 
-def get_logger(name, level=logging.DEBUG):  # WARNING 30, INFO 20, DEBUG 10
+def get_logger(name, level):  # WARNING 30, INFO 20, DEBUG 10
   logging.basicConfig(level=level, format='%(asctime)s %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s', datefmt="%Y-%m-%d %H:%M:%S")
   logging.config.dictConfig({'version': 1, 'disable_existing_loggers': True})  # ignore warning from other module
   logger = logging.getLogger(name)
@@ -28,9 +28,6 @@ def get_logger(name, level=logging.DEBUG):  # WARNING 30, INFO 20, DEBUG 10
     logger.removeHandler(hdlr)
 
   return logger
-
-
-logger = get_logger(__name__, 10 if os.environ.get("DEBUG") else 30)
 
 
 def get_service_account_credential():
@@ -74,3 +71,5 @@ load_dotenv(dotenv_path=PATH.ENV)
 oauth_credential = get_oauth_credential()
 service_account_credential = get_service_account_credential()
 git_credential = get_git_credential()
+DEBUG = os.environ.get("DEBUG")
+logger = get_logger(__name__, 10 if DEBUG != "" else 30)

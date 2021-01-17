@@ -8,6 +8,10 @@ html, body {
   display: flex;
 }
 
+p {
+  white-space: nowrap;
+}
+
 @font-face {
   font-family: "Nanum";
   src: url("font/NanumSquare_acB.ttf");
@@ -21,7 +25,24 @@ html, body {
   src: url("font/GothaProLig.otf");
 }
 
+blockquote {
+  border-left: .25em solid gray !important;
+  padding: 0 1em !important;
+  color: gray !important;
+  margin: 1em 0.5em 0em 0em;
+}
+
 /* LEFT MENU */
+
+.left {
+  display: inline-block;
+  width: 500px;
+}
+
+.right {
+  display: inline-block;
+  color: #5fbe74;
+}
 
 .side {
   width: 350px;
@@ -80,6 +101,7 @@ html, body {
   flex-direction: column;
   position: relative;
   overflow-y: scroll;
+  overflow-x: visible;
 }
 
 .content-head {

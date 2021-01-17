@@ -77,7 +77,7 @@ class JsonDB():
       if os.path.exists(document_path) and not overwrite:
         return False
       with open(document_path, "w") as f:
-        json.dump(document.__dict__, f)
+        json.dump(document.__dict__, f, ensure_ascii=False)
     return True
 
   def delete(self, collection_id, document_id, ignore_missing=True):

@@ -26,44 +26,41 @@ class Gist:
   def get_gist(cls, gist_id, h1="", h2="", h3="", li=""):
     logger.debug(f"get_gist({gist_id})")
     gist = cls(gist_id, h1, h2, h3, li)
-    result = requests.get(f'https://gist.github.com/{gist_id}.js', headers=git_credential).content
-    if result.startswith(b"<!DOCTYPE html>"):
+    result = requests.get(f'https://gist.github.com/{gist_id}.js', headers=git_credential)
+    if result.text.startswith("<!DOCTYPE html>"):
       logger.warning(gist)
       return None
     # update with regex
-    result = result.replace(b"\\\\", b"\\").replace(b"\\/", b"/").replace(b"\\&", b"&").replace(b"\\$", b"$").replace(b"\\<", b"<").replace(b"\\`", b"`")
-    try:
-      result = result.decode('unicode-escape')
-    except Exception as e:
-      logger.warning(e)
-      logger.warning(gist)  # 'unicodeescape' codec can't decode bytes in position 17497-17498: truncated \uXXXX escape
-      return None
+    result = result.text
+    result = result.replace("\\/", "/").replace("\\&", "&").replace("\\$", "$").replace("\\<", "<").replace("\\`", "`").replace("\\n", "\n").replace('\\"', '"')
     result = html.unescape(result)
     result = result.split("document.write('")[-1][:-3]
-    bss = BeautifulSoup(result, "html.parser")
 
-    for bs in bss.find_all(class_="gist"):
-      file_box = bs.find(class_="file-box")
-      root = bs.find(class_="file-box")
-      toggle_div = bss.new_tag('div', attrs={"class": "gist-meta"})
+    bs = BeautifulSoup(result, "html.parser")
 
-      for i, d in enumerate(bs.find_all(class_="file")):
+    for tag in bs.find_all(class_="gist"):
+      file_box = tag.find(class_="file-box")
+      root = tag.find(class_="file-box")
+      toggle_div = bs.new_tag('div', attrs={"class": "gist-meta"})
+
+      for i, d in enumerate(tag.find_all(class_="file")):
+        d["class"] = f"file gist-toggle gist-id-{gist_id}"
         if i != 0:
           file_box.append(d)  # combine to first table
 
-      for d in bs.find_all(class_="gist-meta"):
+      for d in tag.find_all(class_="gist-meta"):
         siblings = list(d.next_elements)
-        id, file_name = siblings[4].attrs["href"].split("#")[-1], siblings[5]
+        file_id, file_name = siblings[4].attrs["href"].split("#")[-1], siblings[5]
         gist.file_names.append(file_name)
-        toggle_a = bss.new_tag('a', attrs={"id": id, "class": f"gist-toggle", "onclick": f"toggle('{id}')", "style": "padding: 0 18px"})
+        toggle_a = bs.new_tag('a', attrs={"id": file_id, "class": f"gist-toggle gist-id-{gist_id}", "onclick": f"toggle('gist-id-{gist_id}', '{file_id}')", "style": "padding: 0 18px"})
         toggle_a.append(file_name)
         toggle_div.append(toggle_a)
         d.extract()  # remove bottom nav
 
       root.insert(0, toggle_div)
-      for d in islice(bs.find_all(class_="gist-file"), 1, None):
+      for d in islice(tag.find_all(class_="gist-file"), 1, None):
         d.extract()  # remove except first
-    gist.html = str(bss)
+    gist.html = str(bs)
     return gist
 
   @staticmethod

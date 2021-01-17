@@ -24,7 +24,7 @@
       "request": "launch",
       "module": "flask",
       "env": {
-        "FLASK_APP": "page.app:get_app()",
+        "FLASK_APP": "page.app:create_app()",
         "FLASK_ENV": "development",
         "FLASK_RUN_PORT": "8080",
         "FLASK_RUN_HOST": "localhost",
