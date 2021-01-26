@@ -1,13 +1,18 @@
 from threading import Lock
+from bs4 import BeautifulSoup
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 from selenium import webdriver
 from dotenv import load_dotenv
+from threading import Lock
+from line_profiler import LineProfiler
+from pathlib import Path
 import os
 import json
 import logging
 import logging.config
-from pathlib import Path
+
+lock = Lock()
 
 
 class PATH:
@@ -58,18 +63,29 @@ def get_oauth_credential():
 
 
 def get_chrome_driver():
-  chrome_options = Options()
-  chrome_options.add_argument('--headless')
-  chrome_options.add_argument('--no-sandbox')
-  # chrome_options.add_argument("--single-process")  # [Solves] DevToolsActivePort file doesn't exist
-  chrome_options.add_argument('--disable-dev-shm-usage')
-  driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
-  return driver
+  global lock
+  with lock:
+    chrome_options = Options()
+    chrome_options.add_argument('--headless')
+    chrome_options.add_argument('--no-sandbox')
+    chrome_options.add_argument('--disable-dev-shm-usage')
+    driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
+    return driver
+
+
+def html2text(html):
+  soup = BeautifulSoup(html, features="html.parser")
+  for script in soup(["script", "style"]):
+    script.extract()
+  text = soup.get_text()
+  lines = (line.strip() for line in text.splitlines())
+  chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
+  return ' '.join(chunk for chunk in chunks if chunk)
 
 
 load_dotenv(dotenv_path=PATH.ENV)
 oauth_credential = get_oauth_credential()
 service_account_credential = get_service_account_credential()
 git_credential = get_git_credential()
-DEBUG = os.environ.get("DEBUG")
-logger = get_logger(__name__, 10 if DEBUG != "" else 30)
+logger = get_logger(__name__, 10 if os.environ.get("DEBUG") != "" else 30)
+driver = get_chrome_driver()

@@ -4,3 +4,6 @@ class Mock:
 
   def __eq__(self, other):
     return self.mock_id == other.mock_id
+
+  def __repr__(self):
+    return f"{self.mock_id}"

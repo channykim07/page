@@ -1,3 +1,4 @@
+algoliasearch==2.4.0
 amqp==5.0.2
 astroid==2.4.2
 autopep8==1.5.4
@@ -43,6 +44,7 @@ itsdangerous==1.1.0
 Jinja2==2.11.2
 kombu==5.0.2
 lazy-object-proxy==1.4.3
+line-profiler==3.1.0
 livereload==2.5.1
 MarkupSafe==1.1.1
 mccabe==0.6.1

@@ -14,7 +14,7 @@ import time
 
 
 class Member(UserMixin):
-  def __init__(self, member_id, baekjoon_id="", team_id="", en_name="", kr_name="", solved_problem_ids=None, is_admin=False):
+  def __init__(self, member_id="", baekjoon_id="", team_id="", en_name="", kr_name="", solved_problem_ids=None, is_admin=False, id=""):
     self.id = member_id  # for flask_login mixin
     self.member_id = member_id
     self.baekjoon_id = baekjoon_id
@@ -25,15 +25,17 @@ class Member(UserMixin):
     self.is_admin = is_admin
 
   def __repr__(self):
-    return f"{self.__dict__}"
+    return f"{self.id}"
 
   @staticmethod
   def update_baekjoon_solved(member):
+    from ..database import remote_db
     driver = get_chrome_driver()
     try:
       driver.get(f"https://www.acmicpc.net/user/{member.baekjoon_id}")
       WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, 'panel-body')))
-      member.solved_problem_ids |= set(f'BJ_{prob_id}' for prob_id in driver.find_element_by_class_name('panel-body').text.split())
+      member.solved_problem_ids = list(f'BJ_{prob_id}' for prob_id in driver.find_element_by_class_name('panel-body').text.split())
+      remote_db.add("member", member)
       return True
     except Exception as e:
       logger.warning(f"{e}")
@@ -53,4 +55,4 @@ class Member(UserMixin):
 
 if __name__ == "__main__":
   from ..database import remote_db
-  Member.update_all_baekjoon_solved([member for member in remote_db.get("member") if len(member.baekjoon_id) != 0])
+  Member.update_all_baekjoon_solved([member for member in remote_db.get_all("member").values() if len(member.baekjoon_id) != 0])

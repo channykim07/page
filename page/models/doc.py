@@ -13,34 +13,28 @@ from google.auth.transport.requests import Request
 from apiclient.discovery import build
 from oauth2client.service_account import ServiceAccountCredentials
 
-doc_id2extensions = {
-    "Python": ["type-python"],
-    "Javascript": ["type-shell"],
-}
-
 
 class Doc:
-  def __init__(self, doc_id="", file_id="", headers=None, contents=None, extensions=None):
+  def __init__(self, doc_id="", file_id="", headers=None, contents=None):
     self.doc_id = doc_id
     self.file_id = file_id
     self.headers = headers or {}
     self.contents = contents or []
-    self.extensions = extensions or []
+
+  def __repr__(self):
+    return f"{self.doc_id} / {len(self.contents)}"
 
   @classmethod
   def get_doc(cls, doc_id, file_id):
     logger.debug(f"get_doc({doc_id}, {file_id})")
     doc = Doc(doc_id, file_id)
     html = Doc.get_html(doc_id, file_id)
-    doc.headers, doc.contents = Doc.html2headers_contents(html)
-    doc.extensions = doc_id2extensions.get(doc_id, [])
+    doc.update_headers_contents(doc, html)
     return doc
 
   @staticmethod
   def get_html(doc_id, file_id):
-    """
-    https://developers.google.com/drive/api/v3/quickstart/python
-    """
+    # https://developers.google.com/drive/api/v3/quickstart/python
     logger.debug(f"get_html({doc_id}, {file_id})")
 
     credentials = ServiceAccountCredentials.from_json_keyfile_dict(service_account_credential, ['https://www.googleapis.com/auth/drive.readonly'])
@@ -56,31 +50,32 @@ class Doc:
     fh.seek(0)
     return fh.read()
 
-  @staticmethod
-  def html2headers_contents(html):
-    logger.debug(f"html2json()")
+  def update_headers_contents(self, doc, html):
+    logger.debug(f"update_headers_contents({doc})")
     bs = BeautifulSoup(html, "html.parser")
 
     h1, h2, h3, li = "", "", "", ""
-    tags = bs.findAll(["h1", "h2", "h3", "p", "li"])
-    tags = list(filter(lambda tag: tag.text != "", tags))
+    tags = list(filter(lambda tag: tag.text != "", bs.findAll(["h1", "h2", "h3", "p", "li"])))
     i = -1
-    headers, contents = {}, []
     while i + 1 < len(tags):
       i += 1
       tag = tags[i]
 
       if tag.name == "h1":
         h1, h2, h3 = tag.text, "", ""
-        headers[h1] = {}
+        doc.headers[h1] = {}
+        doc.headers[h1][''] = {}
+        doc.headers[h1][''][''] = []
       elif tag.name == "h2":
         h2, h3 = tag.text, ""
-        headers[h1][h2] = []
+        doc.headers[h1][h2] = {}
+        doc.headers[h1][h2][''] = []
       elif tag.name == "h3":
         h3 = tag.text
-        headers[h1][h2].append(h3)
+        doc.headers[h1][h2][h3] = []
       elif tag.name == "li":
         li = tag.text
+        doc.headers[h1][h2][h3].append(li)
         gist_ids, form_ids, ps, problem_ids = [], [], [], []
         while i + 1 < len(tags) and tags[i + 1].name == "p":
           i += 1
@@ -109,9 +104,15 @@ class Doc:
           elif tag.text.startswith("[YTUB]"):
             ps.append(str(tag.find("a")))
           else:
-            ps.append(tag.text)
-        contents.append({"h1": h1, "h2": h2, "h3": h3, "li": li, "gist_ids": gist_ids, "form_ids": form_ids, "ps": ps, "problem_ids": problem_ids})
-    return headers, contents
+            img = tag.find("img")
+            table = tag.find("table")
+            if img:
+              ps.append(str(img))
+            elif table:
+              ps.append(str(table))
+            else:
+              ps.append(tag.text)
+        doc.contents.append({"doc_id": doc.doc_id, "h1": h1, "h2": h2, "h3": h3, "li": li, "gist_ids": gist_ids, "form_ids": form_ids, "ps": ps, "problem_ids": problem_ids})
 
 
 if __name__ == '__main__':

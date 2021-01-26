@@ -39,6 +39,7 @@ jobs:
           envkey_GIT: ${{ secrets.GIT }}
           envkey_OAUTH: ${{ secrets.OAUTH }}
           envkey_SERVICE_ACCOUNT: ${{ secrets.SERVICE_ACCOUNT }}
+          envkey_ALGOLIA: ${{ secrets.ALGOLIA }}
 
       - name: Build
         run: |-

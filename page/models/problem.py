@@ -1,7 +1,7 @@
 import json
 import re
 import os
-from ..common import PATH, logger, get_chrome_driver
+from ..common import PATH, logger,  get_chrome_driver
 from itertools import islice, chain
 from firebase_admin import credentials, firestore, initialize_app
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -18,6 +18,9 @@ class Problem():
     self.level = level
     self.link = link
     self.gist_id = gist_id
+
+  def __repr__(self):
+    return f"{self.problem_id}"
 
   @classmethod
   def get_baekjoon_problems_level(cls, level):
@@ -38,9 +41,9 @@ class Problem():
           id_title = line.split(' ', 1)                     # 10430 나머지 계산 -> [10430, 나머지 계산]
           if id_title[0].isdigit() and len(id_title) == 2:
             id, title = id_title
-            link = f'<a href="http://acmicpc.net/problem/{id}" style="color:blue;">{title} ({level})</a>'
-            problem = cls(f"BJ_{id}", title, level, link)
-            logger.debug(problem)
+            problem_id = f"BJ_{id}"
+            link = f'<a href="http://acmicpc.net/problem/{id}" style="color:blue;">{problem_id} {title} ({level})</a>'
+            problem = cls(problem_id, title, level, link)
             problems.append(problem)
     except Exception as e:
       logger.warn(e)

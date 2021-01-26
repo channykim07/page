@@ -29,7 +29,18 @@ blockquote {
   border-left: .25em solid gray !important;
   padding: 0 1em !important;
   color: gray !important;
-  margin: 1em 0.5em 0em 0em;
+  margin: 1em 0.5em 0.5em 0em;
+}
+
+.btn {
+  height:20px;
+  display: inline-block;
+  padding: 0 15px;
+  color : gray !important;
+}
+.btn:hover {
+  color : black !important;
+  font-weight:bold;
 }
 
 /* LEFT MENU */
@@ -41,7 +52,7 @@ blockquote {
 
 .right {
   display: inline-block;
-  color: #5fbe74;
+  color: dimgray;
 }
 
 .side {
@@ -68,6 +79,10 @@ blockquote {
   display: block;
 }
 
+.side-item.current {
+  color: #5fbe74;
+}
+
 .side-search input {
   color: black;
   width: 100%;
@@ -78,12 +93,13 @@ blockquote {
   box-shadow: none;
 }
 
-.side-h1 {
+.side-item.side-h1 {
   font-weight: bold;
+  padding-left: 20px;
 }
 
 .side-h2 {
-  padding-left: 40px;
+  padding-left: 45px;
 }
 
 .side-h3 {
@@ -91,7 +107,8 @@ blockquote {
 }
 
 .side-item:hover {
-  color: #5fbe74;
+  color: black;
+  font-weight:bold;
 }
 
 /* RIGHT CONTENT */
@@ -105,7 +122,7 @@ blockquote {
 }
 
 .content-head {
-  height: 100px;
+  height: 70px;
   text-align: center;
 }
 
@@ -122,12 +139,13 @@ blockquote {
   border-radius: 30px;
 }
 
-.content-head-doc_id .current {
-  background: linear-gradient(to right, black, black);
-  /* #1a73e8, #1a73e8);*/
-  background-repeat: no-repeat;
-  background-size: 70px 2px;
-  background-position: 50% 100%;
+.content-head-doc_id:hover {
+  color: black;
+  font:bold;
+}
+
+.content-head-doc_id.current {
+  color: #5fbe74;
 }
 
 .content-login {
@@ -143,7 +161,7 @@ blockquote {
 
 .content-body {
   height: 100%;
-  max-width: 800px;
+  max-width: 1000px;
   margin: auto;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   line-height: 1.7;
@@ -157,30 +175,23 @@ blockquote {
 }
 
 .gist-file {
-  width: 800px;
+  width: 1000px;
 }
 
 .gist-meta {
   padding-bottom: 0 !important;
 }
 
-.gist-toggle {
+.gist-toggler {
   display: inline-block;
   height: 23px;
 }
 
-.gist-toggle .current {
-  background: linear-gradient(to right, blue, blue);
-  /* #1a73e8, #1a73e8);*/
-  background-repeat: no-repeat;
-  background-size: 30px 2px;
-  background-position: 50% 100%;
+.gist-toggler.current {
+  color: #5fbe74 !important;
 }
 
-.gist-toggle:hover {
-  background: linear-gradient(to right, black, black);
-  /* #1a73e8, #1a73e8);*/
-  background-repeat: no-repeat;
-  background-size: 30px 2px;
-  background-position: 50% 100%;
+.gist-toggler:hover {
+  color: black !important;
+  font-weight:bold !important;
 }

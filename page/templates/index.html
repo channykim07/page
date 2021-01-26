@@ -1,35 +1,43 @@
 {% extends "base.html" %}
 {% block body %}
 <div class="side">
+
+
   <div class="side-item side-search">
-    <input type="text" placeholder="Search">
+    <input id="search-input" type="text" placeholder="Search" onkeyup="search()">
   </div>
   <hr>
   {% for h1, h1_contents in headers[cur_doc_id].items() %}
-  <a class="side-item side-h1" href="/page/{{cur_doc_id}}/{{h1}}">{{h1}}</a>
-  {% if h1 == cur_h1 %}
-  {% for h2, h3s in headers[cur_doc_id][h1].items() %}
+  <a id="{{cur_doc_id}}-{{h1}}--" class="side-item side-h1" href="/page/{{cur_doc_id}}/{{h1}}">{{h1}}</a>
+  {% for h2, h3s in headers[cur_doc_id][h1].items() if not h2 == "" %}
   {% set outer_loop = loop %}
-  <a class="side-item side-h2" href="/page/{{cur_doc_id}}/{{h1}}/{{h2}}">
-    <b>{{outer_loop.index}}. </b>{{h2}}</a>
-  {% for h3 in h3s %}
-  <a class="side-item side-h3" href="/page/{{cur_doc_id}}/{{h1}}/{{h2}}/{{h3}}">
+  <a id="{{cur_doc_id}}-{{h1}}-{{h2}}-" class="side-item side-h2"
+    href="/page/{{cur_doc_id}}/{{h1}}/{{h2}}"><b>{{outer_loop.index}}.
+    </b>{{h2}} </a>
+  {% for h3 in h3s.keys() if not h3 == "" %}
+  <a id="{{cur_doc_id}}-{{h1}}-{{h2}}-{{h3}}" class="side-item side-h3"
+    href="/page/{{cur_doc_id}}/{{h1}}/{{h2}}/{{h3}}">
     <b>{{outer_loop.index}}.{{loop.index}}. </b>{{h3}}</a>
   {% endfor %}
   {% endfor %}
-  {% endif %}
   {% endfor %}
 </div>
 <div class="content">
   <div class="content-login">
+    <a class="btn" href="https://www.linkedin.com/in/sean-gyuseung-hwang-825012186/">
+      <i class="fa fa-linkedin"></i>
+    </a>
+    <a class="btn" href="https://github.com/SeanHwangG">
+      <i class="fa fa-github"></i>
+    </a>
     {% if current_user and current_user.id %}
-    <p style="display:inline">Hi {{ current_user.id }} </p>
-    <a class="content-login-link" href="/signout">Sign out</a>
+    <a class="btn" style="display:inline">Hi {{ current_user.id }} </a>
+    <a class="btn content-login-link" href="/signout">Sign out</a>
     {% if current_user.class_id == "" %}
-    <a class="content-login-link" href="/premium">Premium</a>
+    <a class="btn content-login-link" href="/premium">Premium</a>
     {% endif %}
     {% else %}
-    <a class="content-login-link" href="{{ url_for('signin') }}">Sign in</a>
+    <a class="btn content-login-link" href="{{ url_for('signin') }}">Sign in</a>
     {% endif %}
   </div>
   <div class="content-head">
@@ -49,7 +57,7 @@
     {% endfor %}
 
     {% for g in content["gist_ids"] %}
-    {{ display_gist(g, cur_doc_id) | safe }}
+    {{ display_gist(g) | safe }}
     {% endfor %}
 
     {% endfor %}

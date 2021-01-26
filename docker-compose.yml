@@ -9,3 +9,5 @@ services:
         GIT: $GIT
         OAUTH: $OAUTH
         SERVICE_ACCOUNT: $SERVICE_ACCOUNT
+        ALGOLIA: $ALGOLIA
+        TEST: $TEST
