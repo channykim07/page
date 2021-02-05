@@ -50,7 +50,3 @@ class Team:
             html += f"</table>"
     html += "</div>"
     return html
-
-
-if __name__ == "__main__":
-  pass

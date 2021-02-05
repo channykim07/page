@@ -113,12 +113,3 @@ class Doc:
             else:
               ps.append(tag.text)
         doc.contents.append({"doc_id": doc.doc_id, "h1": h1, "h2": h2, "h3": h3, "li": li, "gist_ids": gist_ids, "form_ids": form_ids, "ps": ps, "problem_ids": problem_ids})
-
-
-if __name__ == '__main__':
-  from ..database import local_db
-  with open(f"{PATH.SRC}/docs.json", "r") as f:
-    docs = json.load(f)
-    for doc in docs:
-      doc = Doc.get_doc(doc["doc_id"], doc["file_id"])
-      local_db.add("doc", doc)

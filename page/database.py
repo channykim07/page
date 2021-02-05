@@ -10,7 +10,6 @@ from .models.problem import Problem
 from .models.doc import Doc
 from .models.mock import Mock
 from .common import PATH, logger, service_account_credential, html2text
-from algoliasearch.search_client import SearchClient
 
 
 def dict2class(collection_id, dict):
@@ -108,22 +107,4 @@ class JsonDB():
     return documents[0] if len(documents) == 1 else documents
 
 
-def get_algolia_client():
-  if "ALGOLIA" not in os.environ:
-    return
-  algolia_credential = os.environ["ALGOLIA"]
-  return SearchClient.create('36HZ0DWIJ7', algolia_credential)
-
-
 local_db = JsonDB()
-
-if __name__ == "__main__":
-  algolia_client = get_algolia_client()
-  index = algolia_client.init_index('page')
-  index.clear_objects()
-  for doc in local_db.get_all("page").values():
-    gist_texts = ""
-    for gist_id in doc.contents["gist_ids"]:
-      gist = local_db.get("gist", gist_id)
-      gist_texts += html2text(gist.html)
-    index.save_objects([{**doc.contents, 'objectID': "-".join([doc.contents['doc_id'], content['h1'], content['h2'], content['h3'], content['li']]), "gist_texts": gist_texts} for content in doc.contents])

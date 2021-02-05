@@ -51,8 +51,3 @@ class Member(UserMixin):
     with ThreadPoolExecutor() as ex:
       futures = [ex.submit(Member.update_baekjoon_solved, member) for member in islice(members, limit)]
       return all(future.result() for future in as_completed(futures))
-
-
-if __name__ == "__main__":
-  from ..database import remote_db
-  Member.update_all_baekjoon_solved([member for member in remote_db.get_all("member").values() if len(member.baekjoon_id) != 0])

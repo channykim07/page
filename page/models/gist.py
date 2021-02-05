@@ -74,29 +74,3 @@ class Gist:
       futures.extend([ex.submit(Gist.get_gist, gist_id, h1, h2, h3, li) for gist_id in gist_ids])
     gists = [future.result() for future in as_completed(futures)]
     return [gist for gist in gists if gist != None]
-
-
-def fetch_and_update_gist():
-  from ..database import local_db
-  for doc in local_db.get_all("doc").values():
-    for content in doc.contents:
-      local_db.add("gist", Gist.get_all_gist(content["gist_ids"], content["h1"], content["h2"], content["h3"], content["li"]))
-  for gist in local_db.get_all("gist").values():
-    try:
-      file_name = gist.file_names[0]
-    except Exception as e:
-      logger.error(f"{e}")
-      continue
-    if file_name.startswith("BJ_") or file_name.startswith("KT_") or file_name.startswith("LC_"):
-      try:
-        problem = local_db.get("problem", file_name.split(".")[0])
-        problem.gist_id = gist.gist_id
-        gist.problem_id = problem.problem_id
-        local_db.add("problem", problem)
-        local_db.add("gist", gist)
-      except Exception as e:
-        logger.error(e)
-
-
-if __name__ == "__main__":
-  fetch_and_update_gist()

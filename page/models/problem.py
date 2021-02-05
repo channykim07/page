@@ -88,8 +88,3 @@ class Problem():
     finally:
       driver.quit()
     return problems
-
-
-if __name__ == "__main__":
-  from ..database import local_db
-  local_db.add("problem", Problem.get_baekjoon_problems() + Problem.get_leetcode_problems())
