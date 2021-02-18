@@ -604,37 +604,22 @@ queryInterface.changeColumn('Person', 'foo', {
 > Relation
 
 * A HasOne B association
-    * 1-1 relationship exists between A and B
-    * foreign key being defined target B
+  * 1-1 relationship exists between A and B
+  * foreign key being defined target B
 
 ```js
 User.hasOne(models.UserProfile, { foreignKey: { name: "userID", allowNull: false } });
 ```
 
 * A BelongsTo B association
-    * 1-1 relationship exists between A and B
-    * foreign keys being defined in the source model (A).
-    * should be added when we need an owner
-    * Book.belongsTo(models.User)
+  * 1-1 relationship exists between A and B
+  * foreign keys being defined in the source model (A).
+  * should be added when we need an owner
+  * Book.belongsTo(models.User)
 
 ```js
 Match.belongsTo(models.User, {foreignKey: { name: "userID" } });
-```
 
-* A HasMany B association
-    * 1-n relationship exists between A and B, 
-    * foreign key being defined in the target model (B).
-
-```js
-db.food.hasMany(db.meal, {as : 'Food', foreignKey : 'foodID'});
-```
-
-* A BelongsToMany B association
-    * n-n relationship exists between A and B, using table C as junction table
-    * Table C has the foreign keys (aId and bId, for example)
-    * Sequelize will automatically create this model C (if not exists) and define appropriate foreign keys on it
-
-```js
 import { DataTypes, Model, Sequelize } from "sequelize";
 
 export default (sequelize: Sequelize) => {
@@ -658,6 +643,71 @@ export default (sequelize: Sequelize) => {
     { sequelize, modelName: "Match", ...modelOptions["general"] },
   );
 };
+```
+
+* A HasMany B association
+  * 1-n relationship exists between A and B.
+  * foreign key being defined in the target model (B).
+
+```js
+db.food.hasMany(db.meal, {as : 'Food', foreignKey : 'foodID'});
+```
+
+* A BelongsToMany B association
+  * n-n relationship exists between A and B, using table C as junction table
+  * Table C has the foreign keys (automatically create the two attributes userId and profileId)
+  * Sequelize will automatically create this model C (if not exists) and define appropriate foreign keys on it
+
+```js
+// automatically creates
+fooInstance.getBars()
+fooInstance.countBars()
+fooInstance.hasBar()
+fooInstance.hasBars()
+fooInstance.setBars()
+fooInstance.addBar()
+fooInstance.addBars()
+fooInstance.removeBar()
+fooInstance.removeBars()
+fooInstance.createBar()
+
+// This creates a junction table `foo_bar` with fields `fooId` and `barId`
+Foo.belongsToMany(Bar, { through: 'foo_bar' });
+// This creates a junction table `foo_bar` with fields `fooId` and `barTitle`
+Foo.belongsToMany(Bar, { through: 'foo_bar', targetKey: 'title' });
+// This creates a junction table `foo_bar` with fields `fooName` and `barId`
+Foo.belongsToMany(Bar, { through: 'foo_bar', sourceKey: 'name' });
+// This creates a junction table `foo_bar` with fields `fooName` and `barTitle`
+Foo.belongsToMany(Bar, { through: 'foo_bar', sourceKey: 'name', targetKey: 'title' });
+```
+
+* Example
+
+```js
+// 1 : Basic Example
+const User = sequelize.define('user', { username: DataTypes.STRING, points: DataTypes.INTEGER }, { timestamps: false } );
+const Profile = sequelize.define('profile', { name: DataTypes.STRING }, { timestamps: false } );
+User.belongsToMany(Profile, { through: 'User_Profiles', foreignKey: "UserID"});
+Profile.belongsToMany(User, { through: 'User_Profiles', foreignKey: "ProfileID"});
+
+// 2 : Loadingd
+User.belongsToMany(Profile, { through: 'User_Profiles' });
+Profile.belongsToMany(User, { through: 'User_Profiles' });
+
+//  a. Lazy
+const amidala = await User.create({ username: 'p4dm3', points: 1000 });
+const queen = await Profile.create({ name: 'Queen' });
+await amidala.addProfile(queen, { through: { selfGranted: false } });
+const result = await User.findOne({ where: { username: 'p4dm3' }, include: Profile });
+console.log(result);
+
+//  b. Eager
+const amidala = await User.create({
+  username: 'p4dm3', points: 1000,
+  profiles: [{ name: 'Queen', User_Profile: { selfGranted: true } }]
+}, { include: Profile });
+
+const result = await User.findOne({ where: { username: 'p4dm3' }, include: Profile });
 ```
 
 > Constraints
@@ -892,6 +942,41 @@ Foo.findOne({
 
 ### Join
 
+* Eager Loading
+  * fetching everything at once, since the beginning, with a larger query
+
+```js
+const awesomeCaptain = await Captain.findOne({
+  where: {
+    name: "Jack Sparrow"
+  },
+  include: Ship
+});
+// Now the ship comes with it
+console.log('Name:', awesomeCaptain.name);
+console.log('Skill Level:', awesomeCaptain.skillLevel);
+console.log('Ship Name:', awesomeCaptain.ship.name);
+console.log('Amount of Sails:', awesomeCaptain.ship.amountOfSails);
+```
+
+* Lazy Loading
+  * technique of fetching the associated data only when you really want it;
+
+```js
+const awesomeCaptain = await Captain.findOne({
+  where: {
+    name: "Jack Sparrow"
+  }
+});
+// Do stuff with the fetched captain
+console.log('Name:', awesomeCaptain.name);
+console.log('Skill Level:', awesomeCaptain.skillLevel);
+// Now we want information about his ship!
+const hisShip = await awesomeCaptain.getShip();
+console.log('Ship Name:', hisShip.name);
+console.log('Amount of Sails:', hisShip.amountOfSails);
+```
+
 * Basic
 
 ```js
@@ -902,6 +987,27 @@ BoardModel.findAndCountAll({
   attributes: [[ sequelize.fn("COUNT", sequelize,col('board_comments.id')), 'commentCount']],
   include: [ {model: BoardCommentModel, attributes: [] }]
 })
+```
+
+* subQuery
+
+```js
+// SELECT *, ( SELECT COUNT(*) FROM reactions AS reaction
+//     WHERE reaction.postId = post.id AND reaction.type = "Laugh") AS laughReactionsCount
+//   FROM posts AS post
+Post.findAll({
+  attributes: {
+    include: [
+      [ // Note the wrapping parentheses in the call below!
+        sequelize.literal(`( SELECT COUNT(*) FROM reactions AS reaction WHERE reaction.postId = post.id AND reaction.type = "Laugh")`),
+        'laughReactionsCount'
+      ]
+    ]
+  },
+  order: [
+    [sequelize.literal('laughReactionsCount'), 'DESC']
+  ]
+});
 ```
 
 > LEFT OUTER JOIN
@@ -992,25 +1098,19 @@ User.findAll({
 * Sequelize help the main (larger query) but you will still have to write that sub-query by yourself
 
 ```js
+// SELECT *, (SELECT COUNT(*) FROM reactions AS reaction
+//            WHERE reaction.postId = post.id AND reaction.type = "Laugh") AS laughReactionsCount
+// FROM posts AS post
 
-* subQuery
-
-```js
-// SELECT *, ( SELECT COUNT(*) FROM reactions AS reaction
-//     WHERE reaction.postId = post.id AND reaction.type = "Laugh") AS laughReactionsCount
-//   FROM posts AS post
 Post.findAll({
   attributes: {
-    include: [
-      [ // Note the wrapping parentheses in the call below!
-        sequelize.literal(`( SELECT COUNT(*) FROM reactions AS reaction WHERE reaction.postId = post.id AND reaction.type = "Laugh")`),
-        'laughReactionsCount'
-      ]
-    ]
-  },
-  order: [
-    [sequelize.literal('laughReactionsCount'), 'DESC']
-  ]
+    include: [[
+        sequelize.literal(`( SELECT COUNT(*)
+                             FROM reactions AS reaction
+                             WHERE reaction.postId = post.id AND reaction.type = "Laugh")`),
+                             'laughReactionsCount'
+      ]]
+  }
 });
 
 // SELECT * FROM characteristic 
@@ -1020,7 +1120,6 @@ characteristic_id : {
   $in: [clout.sequelize.literal('select characteristic_id from characteristic_variant_val'))]
 }
 ```
-
 
 ### Update
 
@@ -1048,6 +1147,34 @@ Post.update({
   where: { id },
   params: { finish: Sequelize.literal("NOT finish") },
 }
+```
+
+> Transaction
+
+```js
+const t = await sequelize.transaction();
+
+try {
+  // Then, we do some calls passing this transaction as an option:
+  const user = await User.create({
+    firstName: 'Bart',
+    lastName: 'Simpson'
+  }, { transaction: t });
+
+  await user.addSibling({
+    firstName: 'Lisa',
+    lastName: 'Simpson'
+  }, { transaction: t });
+
+  // If the execution reaches this line, no errors were thrown. We commit the transaction.
+  await t.commit();
+
+} catch (error) {
+
+  // If the execution reaches this line, an error was thrown. We rollback the transaction.
+  await t.rollback();
+}
+
 ```
 
 ### Delete

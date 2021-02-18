@@ -8,7 +8,8 @@
 * [-] Scope confusion → inner scope can see not modify the outer scope
 * [-] untyped → slow
 * [-] Python wasn’t made with mobile in mind → javascript, android studio, Swift C
-* https://wikidocs.net/book/536
+* [Reference 1](https://wikidocs.net/book/536)
+* [Reference 2](https://docs.python.org/3/)
 
 * Download
 
@@ -21,9 +22,9 @@ sudo apt install python3.9
 
 ## Error
 
-### Class
+> Class
 
-> TypeError: Cannot create a consistent method resolution
+* TypeError: Cannot create a consistent method resolution
 
 ```py
 class Player:
@@ -40,23 +41,24 @@ g = GameObject()
 
 * GameObject is inheriting from Player and Enemy. Because Enemy already inherits from Player
 
-### Module
+> Module
 
-> Command '['/path/to/env/bin/python3.7', '-Im', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1
+* Command '['/path/to/env/bin/python3.7', '-Im', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1
+  * sudo apt-get install python3.9-venv
 
-* sudo apt-get install python3.9-venv
+* Cannot be found
+  * python3 -c "import sys;print(sys.path)"
+  * Add to PYTHONPATH
 
-> Cannot be found
+* zsh: command not found: pipreqs
+  * When running a module as cli
+  * export `PATH="/Users/<my-username>/Library/Python/<python-edition>/bin:$PATH"`
 
-* python3 -c "import sys;print(sys.path)"
-* Add to PYTHONPATH
+* RuntimeWarning: 'module.api' found in sys.modules after import of package 'module', but prior to execution of 'module.api'; this may result in unpredictable behaviour
+  * python3 -m module.a
 
-> zsh: command not found: pipreqs
-
-* When running a module as cli
-* export PATH="/Users/<my-username>/Library/Python/<python-edition>/bin:$PATH"
-
-> RuntimeWarning: 'module.api' found in sys.modules after import of package 'module', but prior to execution of 'module.api'; this may result in unpredictable behaviour
+* python command not found
+  * `/usr/local/opt/python@3.8/bin:$PATH`
 
 ```py
 # module/api.py
@@ -66,9 +68,7 @@ constant = 5
 from .api import constant
 ```
 
-* python3 -m module.api
-
-> circular import
+* circular import
 
 ```py
 # a.py
@@ -90,70 +90,67 @@ def function_c():
     return a.function_a()
 ```
 
-### Syntax
+> Syntax
 
-> NameError: name 'prin' is not defined
+* NameError: name 'prin' is not defined
+  * try to use a variable or a function name that is not valid
+  * print(1)
 
 ```py
 prin(1)
 ```
 
-* try to use a variable or a function name that is not valid
-* print(1)
-
-> SyntaxError: unexpected EOF while parsing
+* SyntaxError: unexpected EOF while parsing
+  * print(1)
 
 ```py
 print(1
 ```
 
-* print(1)
-
-> AttributeError: 'builtin_function_or_method' object has no attribute 'split'
+* AttributeError: 'builtin_function_or_method' object has no attribute 'split'
 
 ```py
 a = input.split()
 ```
 
-> IndentationError: expected an indented block
+* IndentationError: expected an indented block
+  * for must be indented by some space
 
 ```py
 for i in range(3):
 print(1)
 ```
 
-* for must be indented by some space
-
-> TypeError 'float' object cannot be interpreted as an integer
-
-> TypeError 'int' object is not iterable
+* TypeError 'float' object cannot be interpreted as an integer
+  * range function takes int
 
 ```py
 range(11 / 2)
+```
+
+* TypeError 'int' object is not iterable
+  * min function takes iterable
+
+```py
 min(1)
 ```
 
-* range function takes int
-* min function takes iterable
-
-> UnboundLocalError: local variable 's' referenced before assignment
+* UnboundLocalError: local variable 's' referenced before assignment
+  * variable can't be both local and global inside a function
 
 ```py
 def f(): 
- print(s)      # Error
- s = "I love London!"
- print(s)
+  # global s    # Solution
+  print(s)      # Error
+  s = "I love London!"
+  print(s)
  
 s = "I love Paris!"
 f()
 ```
 
-* variable can't be both local and global inside a function
-
-
-> AttributeError: <'classmethod' or 'staticmethod'>,  object has no attribute '__name__'
-
-*  apply classmethod and staticmethod last when using multiple decorators
+* AttributeError: <'classmethod' or 'staticmethod'>,  object has no attribute '__name__'
+  * apply classmethod and staticmethod last when using multiple decorators
 
 ```py
 class My_class(object):
@@ -164,25 +161,21 @@ class GameObject(Enemy):
     pass
 ```
 
-## Terms
+> Terms
 
-> Expression
+* Expression
+  * If you can print it, or assign it to a variable, it’s an expression. 
+  * Atoms is the most basic element of expressions → identifiers, literals, forms enclosed in parentheses
 
-* If you can print it, or assign it to a variable, it’s an expression. 
-* Atoms is the most basic element of expressions → identifiers, literals, forms enclosed in parentheses
+* Statement
+  * If you can’t print it, or assign it to a variable, it’s a statement
 
-> Statement
+* Identifier
+  * unlimited in length. Case is significant 
 
-* If you can’t print it, or assign it to a variable, it’s a statement
-
-> Identifier
-
-* unlimited in length. Case is significant
-
-> GIL
-
-* None python created thread doesn’t have thread state structure
-* PyGILState_Ensure() / PyGILState_Release()  # create thread data structure and free
+* GIL
+  * None python created thread doesn’t have thread state structure
+  * PyGILState_Ensure() / PyGILState_Release()  # create thread data structure and free
 
 ## Packaging
 

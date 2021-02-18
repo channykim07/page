@@ -11,6 +11,9 @@
 
 > Run
 
+* [Online Editor - leetcode](https://leetcode.com/playground/new/empty)
+* [Online Editor - codechef](https://leetcode.com/playground/new/empty)
+
 ```py
 python a.py
 -c <command>      # Execute python code in command (; for line delimiter)
@@ -45,7 +48,8 @@ float      # 1.5, -0.0, float('Inf')
 complex    # 5 + 3j
 str        # "A"
 
-isinstance(entry, dict)            # check for type
+isinstance(entry, dict) # check for type
+type(int)               # print type 
 ```
 
 > Muttable
@@ -58,10 +62,8 @@ isinstance(entry, dict)            # check for type
 * Lists of keywords in python
 
 ```py
-False | True
-await 
-else | import | None | except | in | raise | class | finally | return | and | continue | for | lambda | try 
-as | def | from | while | assert | del | not | with | async | elif | if | or
+False | True | await | else | import | None | except | in | raise | class | finally | return | and
+| continue | for | lambda | try | as | def | from | while | assert | del | not | with | async | elif | if | or
 ```
 
 * yield
@@ -161,7 +163,6 @@ def global_():
 ### Builtin
 
 * [Builtin](https://docs.google.com/forms/d/1h5ecgQP-LY4t2Ws2dIiKW_hIoNF4LdygvobNjGnQYik/edit)
-* [min](https://docs.google.com/forms/d/18Y-LtjIQXnTucECDhzw7PGnc7PdZ_m9IwlMUkF4l8aw/edit)
 * [zip](https://docs.google.com/forms/d/1Jk4mCZZ_7ONrFjg9UUuSJha-GKOn4fU8pnMCApkj8Eo/edit)
 
 ```py
@@ -188,48 +189,7 @@ reduce(func, iterable, start=1) # (from functools lib)
 setattr(object, name, value)    # 
 sum()       # sum of all iterables
 
-# print(*obj, sep=' ', end='\n')
-print("Hello World")
-print(12352, end="")        # no newline after print
-print(12352, 1235, sep="")  # no space between comma
-print("""line1      
-line2""")       # Multiline
-
-# input()
-str = input()         # string
-num = int(input())    # single integer 
-num = float(input())  # single float 
-a, b = map(int, input().split())  # two integers
-li = list(map(int, input().split()))  # list of ints
-
-# map(func, iterable) 
-# returns a generator, print('\n'.join(map(''.join, grid)))
-# Must be casted (to save memory)
-
-# open(f, mode='r')
-
-+     # both read and write
-a / w # append / create a new file if it does not exist
-b     # binary mode
-r     # read
-t     # text mode (default mode)
-x     # open for exclusive creation, failing if the file already exists
-
-with open(filename, 'r+') as f:   # prepend
-  content = f.read()
-  f.seek(0, 0)
-  f.write(line.rstrip('\r\n') + '\n' + content)
-
-file = open('some_file', 'w') # with open('some_file', 'w') as file: (Context manager)
-try:
-  file.write('Hola!')
-finally:
-  file.close()
-```
-
-* Show all builtins
-
-```py
+# Show all builtins
 print(__builtins__.__dict__)  # show builtins
 
 for attr in dir("AB"):    # show methods
@@ -238,9 +198,15 @@ for attr in dir("AB"):    # show methods
 help("AB")        # run interactive help system
 ```
 
-* print
+* print(*obj, sep=' ', end='\n')
 
 ```py
+print("Hello World")
+print(12352, end="")        # no newline after print
+print(12352, 1235, sep="")  # no space between comma
+print("""line1      
+line2""")       # Multiline
+
 # suppress print
 import sys
 sys.stdout = open(os.devnull, 'w')
@@ -264,29 +230,67 @@ print(f"{bcolors.WARNING}Warning: No active frommets remain. Continue?{bcolors.E
 # Escape (₩ is used instead of backslash in korean keyboards)
 print("\" \' \\")    # Double Quote / single quote / backslash
 print("\n \r \t")    # New Line / Carriage Return / Tab  
+
+# format (introduced after 3.6)  
+# Before (3.6) '{1} {0}'.format('one', 'two')
+f"{3.1415:.2f}"       # 3.14 (decimal places)
+f'{3.1415:+.2f}'      # +3.14 (decimal places + sign)
+f"{5:0 > / < / ^ 2d}" # xxxx5 (left / right / center padding)
+f"{1000000:,}"        # 1,000,000 (comma separator)
+f"{1000000000:.2e}"   # 1.00e+09 (Exponent notation)
+f"{0.35:.3%}"         # 35.000% (Percent)
+f"{0!r / s / a}"      # repr() str()  ascii() on the argument firs
 ```
 
-* format (introduced after 3.6)  
+* input()
 
 ```py
-# Before
-# '{1} {0}'.format('one', 'two')
+str = input()         # string
+num = int(input())    # single integer 
+num = float(input())  # single float 
+a, b = map(int, input().split())  # two integers
+li = list(map(int, input().split()))  # list of ints
 
-{3.1415:.2f}    # 3.14 (decimal places)
-f'{3.1415:+.2f}'  # +3.14 (decimal places + sign)
-{5:0 > / < / ^ 2d}  # xxxx5 (left / right / center padding)
-{1000000:,}     # 1,000,000 (comma separator)
-{1000000000:.2e}  # 1.00e+09 (Exponent notation)
-{0.35:.3%}    # 35.000% (Percent)
-{0!r / s / a}   # repr() str()  ascii() on the argument firs
-```
-
-* All input at once
-
-```py
 import sys
-a = sys.stdin.read()    # All input at once
+a = sys.stdin.read()        # All input at once
 input = sys.stdin.readline  # Faster Input
+```
+
+* map(func, iterable)
+
+```py
+# returns a generator, print('\n'.join(map(''.join, grid)))
+# Must be casted (to save memory)
+```
+
+* open(f, mode='r')
+
+```py
++     # both read and write
+a / w # append / create a new file if it does not exist
+b     # binary mode
+r     # read
+t     # text mode (default mode)
+x     # open for exclusive creation, failing if the file already exists
+
+with open(filename, 'r+') as f:   # prepend
+  content = f.read()
+  f.seek(0, 0)
+  f.write(line.rstrip('\r\n') + '\n' + content)
+
+file = open('some_file', 'w') # with open('some_file', 'w') as file: (Context manager)
+try:
+  file.write('Hola!')
+finally:
+  file.close()
+```
+
+* min, max, abs (iterables)
+  * [min, max, abs](https://docs.google.com/forms/d/18Y-LtjIQXnTucECDhzw7PGnc7PdZ_m9IwlMUkF4l8aw/edit)
+
+```py
+print(min(1, 2))      # 1
+print(min([5, 1, 2])) # 5
 ```
 
 ## Operation
@@ -317,21 +321,21 @@ print(5.1 % 1)    # 0.1
 * [Binary](https://docs.google.com/forms/d/1q-TTG8LYhtCI1a1o9c2fgHKecOrrP5bXHxxIZXb2FK8/edit)
 
 ```py
-n&-n         # Get lowest set bit
-(n&(n-1))==0     # Check power of two
+n&-n           # Get lowest set bit
+(n&(n-1))==0   # Check power of two
 
-int('0b1111')      # 15    (2 → 10)
-int('A0', 16)      # 160   (16 → 10)
-bin(11)        # '0b1011'  (10 → 2)
-oct(15)        # '0o17'  (10 → 8)
-hex(10)        # '0xA'   (10 → 16)
+int('0b1111')  # 15    (2 → 10)
+int('A0', 16)  # 160   (16 → 10)
+bin(11)        # '0b1011' (10 → 2)
+oct(15)        # '0o17'   (10 → 8)
+hex(10)        # '0xA'    (10 → 16)
 
 print('2', '10', '16')   # table
 for i in range(50):
   print(bin(i)[2:], '\t', i, '\t', hex(i)[2:]) 
 ```
 
-> <math>
+> math
 
 * [round](https://docs.google.com/forms/d/19Hzj2ohcfL9cT4QnrDVvd89YTPj_a8z53KNOM-55ZlE/edit)
 * [combination](https://docs.google.com/forms/d/1AeV7i1ky3EHT0ap8SStwHDkQiBmrlG8w2hXDEOQrh_c/edit)
@@ -379,7 +383,7 @@ else:
 
 > Exception
 
-* Builtins
+* Builtins exceptions
 
 ```py
 ImportError
@@ -403,7 +407,7 @@ for x, y in test_cases:
     print("Successful")
 ```
 
-* Raise exception quitely 
+* Raise exception quitely
 
 ```py
 class StopExecution(Exception):
@@ -418,10 +422,8 @@ raise StopExecution
 * strings, list, set, dictionary are iterables
 
 * [Range](https://docs.google.com/forms/d/1dz9jZFRHZ-o8WkX8YMZOGZHQNHc2Y0IP1pr1i0u4bPw/edit)
-* [Join](https://docs.google.com/forms/d/1_tIWmaxMZktjNbkwjPmqEEeEbE4B9-Ap4JJXmg01Ed4/edit)
 * [For](https://docs.google.com/forms/d/16-2IDV2GtXfgGp-U0EfyfdR9koq8bL5a3NepdAgupzU/edit)
 * [Index](https://docs.google.com/forms/d/1U_VWE-a4XXsrV81rmktAdtdeF5GoF3A3eSQiqa15d4E/edit)
-* [Unicode](https://docs.google.com/forms/d/1qQc3AO59rHViwuUL7bH3ICWN9pD_TeTNNWKGNxA5Tfs/edit)
 * [List_1](https://docs.google.com/forms/d/1OjjwrnTEIrhmoP7e7bzcU81yK9B7fKGViyWFRQJ_uNY/edit)
 * [List_2](https://docs.google.com/forms/d/1JOb7wz4EX5AVQ5JjGPFercOH7VgmozrD9d8r4p7NdnQ/edit)
 * [2D](https://docs.google.com/forms/d/1n5pIPsNG1zgzMWEwxq4zJITLHx_fLYJUsOhIDZlLoc0/edit)
@@ -455,9 +457,9 @@ print(f"{a}=={b}" if a == b else f"{a} != {b}")
 ![alt](images/20210213_152758.png)
 
 * Sequence of unicode Character
-* [String_1](https://docs.google.com/forms/d/1OcKS_YdzQKEySMmq_Xas6bJDND0sId_4H-g7Q4WAl8A/edit)
-* [String_2](https://docs.google.com/forms/d/1snU0q32ZGaCc8Q-qOZ7XAUt51i28lZi3pPIiT12kN54/edit)
-* [Split](https://docs.google.com/forms/d/1cSrstATAUQt7WNtsoUzL1eATQsCw65FlxD5qL5HnmKA/edit)
+  * [String_1](https://docs.google.com/forms/d/1OcKS_YdzQKEySMmq_Xas6bJDND0sId_4H-g7Q4WAl8A/edit)
+  * [String_2](https://docs.google.com/forms/d/1snU0q32ZGaCc8Q-qOZ7XAUt51i28lZi3pPIiT12kN54/edit)
+  * [Split](https://docs.google.com/forms/d/1cSrstATAUQt7WNtsoUzL1eATQsCw65FlxD5qL5HnmKA/edit)
 
 ```py
 isdigit()           # Checks if string only contains 0-9
@@ -465,22 +467,38 @@ isupper() islower() # Return True if upper case or lower case
 lower() / upper()   # convert to upper or lower case
 swapcase()          # all the upper case letters are lower case and vice versa
 title()             # Upper only first char
-
 count(‘a’)          # count number of str
-index(sub[, start[, end]])  # equivalent to find raise value error
-find(sub[, start[, end]]) # lowest index in the string where substring sub is found | -1 if not
-join(seq)           # default empty "".join([str(x) for x in l])
 partition(word)     # Search for word, and return a tuple with before, match, after
 replace(“P”, “-”)   # replace P to -
+rstrip([chs])       # default whitespaces | e.x. 'mississippi'.rstrip('ipz') → 'mississ'
+strip()             # removes chars from side (default whitespace)
+
 rfind(str, beg=0 end=len(string)) # highest index in the string where substring sub is found | -1 if not
 rjust(width[, fillchar])     # right justified in a string of specified length
-rstrip([chs])       # default whitespaces | e.x. 'mississippi'.rstrip('ipz') → 'mississ'
+index(sub[, start[, end]])   # equivalent to find raise value error
+find(sub[, start[, end]])    # lowest index in the string where substring sub is found | -1 if not
 split(sep=None, maxsplit=-1) # using sep as the delimiter string
 startswith(str, beg=0))      # check if starts with str
-strip()             # removes chars from side (default whitespace)
 ```
 
+* join(seq)
+  * [Join](https://docs.google.com/forms/d/1_tIWmaxMZktjNbkwjPmqEEeEbE4B9-Ap4JJXmg01Ed4/edit)
+
+```py
+"".join([str(x) for x in l])
+```
+
+* maketrans
+
+```py
+tb = 'ab'.maketrans({'a': '1', 'b': '4'}) # create dictionary
+'ab'.translate(tb)  # 14
+```
+
+> Encoding
+
 * encoding
+  * [Unicode](https://docs.google.com/forms/d/1qQc3AO59rHViwuUL7bH3ICWN9pD_TeTNNWKGNxA5Tfs/edit)
 
 ```py
 '한'.encode('UTF-8'))            # b'\xed\x95\x9c (bytes)
@@ -494,53 +512,43 @@ f"{str(b'hello', 'utf-8')}"
 ## print(b'\u0660'.decode('utf-8'))
 ```
 
-* maketrans
-
-```py
-tb = 'ab'.maketrans({'a': '1', 'b': '4'}) # create dictionary
-'ab'.translate(tb)  # 14
-```
-
-> Encoding
-
 * python2 encoding ‘ascii’ encoding
 * Unicode → ASCII, code point is < 128, value of the code point, error otherwise
 
 ```py
-unicode(string[, encoding, errors])  # convert  
-```
-
-* Python2  
-
-```py
-type('가')    # <type 'str'>
-type(u'가')   # <type unicode'>
-```
-
-* coding: utf-8  # python2 header
-
-```py
-type('한')      # <class 'str'>
-'한'.encode('UTF-8')  # 
-unicode_string.encode(enc) # unicode → str
-byte_string.decode(enc)  # str → unicode
-
-'hello'.decode('utf-8')  # byte → str in Python 2
+# Python 2  
+coding: utf-8  # python2 header
+type('가')      # <type 'str'>
+type(u'가')     # <type unicode'>
+'hello'.decode('utf-8')     # byte → str
 unicode('hello', 'utf-8')
 
-b'hello'.decode('utf-8') # byte → str in Python 3
+# python 3
+type('한')            # <class 'str'>
+'한'.encode('UTF-8')  # 
+unicode_string.encode(enc)  # unicode → str
+byte_string.decode(enc)     # str → unicode
+b'hello'.decode('utf-8')    # byte → str
 str(b'hello', 'utf-8')    
+
+unicode(string[, encoding, errors])  # convert  
 ```
 
 > regex
 
 ```py
-re.DOTALL   # match new line
-re.I        # case insensitive matching
-(?<=...)    # positive lookbehind
-(?<!...)    # negative lookbehind.
-(?=...)     # positive lookahead. A (?!B) only match if A followed by B
-(?!...)     # negative lookahead. A (?!Sam) match Tom Sam
+re.DOTALL      # match new line
+re.I           # case insensitive matching
+r"(?<=...)"    # positive lookbehind
+r"(?<!...)"    # negative lookbehind.
+r"(?=...)"     # positive lookahead. A (?!B) only match if A followed by B
+r"(?!...)"     # negative lookahead. A (?!Sam) match Tom Sam
+
+# Escape
+\.    # dot
+\-    # dash
+\( | \) # braces
+\[ | \] # bracket
 
 findall(pattern, string, flags=0)  # Return all non-overlapping matches of pattern
 finditer(pattern, string)
@@ -548,15 +556,38 @@ match()     # match at the beginning of the string
 search()    # Checks for one match
 split(pattern, string, maxsplit=0)  # split(r'\W+', 'Words, words') ⇒ ['Words', 'words', '']
 
-txt = "The rain in Spain"
-x = re.search(r"\bS\w+", txt)
-print(x.string)    # "The rain in Spain"
+# Word
+[a-c]   # contain a, b, c
+[^a-c]  # not contain a, b, c
 
-rint("Email \t {}".format(re.findall(r'([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)', "rbtmd10@gmail.com, fakeemail@@f.com")))
-print("Nested Parentheses \t {}".format(re.findall("{[^{}]+}", "{A}, {{B}} {{C}, {D}, E}")))
-print("US or KOREA \t {}".format(re.findall("\((?:1|82)\)", "(82) (821) (1) 82 1")))
-print("Non-capturing group \t {}".format(re.findall("(?i)\d{2}:\d{2}(?:am|pm)", "02:40pm 12:29AM")))
-print("Grap as little as possible \t {}".format(re.findall(r'(.*?)D', "ABCD, ABD")))
+^a      # starts with a
+a$      # ends with a
+
+r"\b(words)\b" # word boundary
+r".*a"         # greedy match (all the way to the end, and then backtrack to a)
+r".*?"         # non-greedy (will try to match extra characters until it matches 1)
+"\n"               # references the nth capturing group
+"^([aeiou]).+\1$"  # Starts and End with same vowel
+"^\d\d(-?)\d\d\1\d\d\1\d\d"  # 12345678 or 12-34-56-78
+
+一-龥              # Chineses Character
+가-힇              # Korean Character
+ぁ-ゔ|ァ-ヴー|々〆〤  # Japanese Character
+
+# Length
+{5}     # five character
+{2,6}   # between 2, 6
++ / *   # 1 / 0 or more
+?       # optional
+
+# Conditional
+(cat | dog)  # cat or dog
+
+# Type
+r"\w"           # Unicode letter, ideogram, digit, underscore  ; Capital <>
+[r"\d", r"\D"]  # digit | Non-digit
+[r"\s", r"\S"]  # space, tab, newline | non-space, tab, newline
+r"\t"           # tab
 ```
 
 * re.match
@@ -569,78 +600,49 @@ groupdict()       # (?P<first_name>\w+) → firstname:
 string            # The string passed to match() or search()
 ```
 
-* Escape
-
-```sh
-\.    # dot
-\-    # dash
-\( | \) # braces
-\[ | \] # bracket
-
-> Word
-[a-c]   # contain a, b, c
-[^a-c]  # not contain a, b, c
-
-^a    # starts with a
-a$    # ends with a
-
-\b(words)\b # word boundary
-
-.*a     # greedy match (all the way to the end, and then backtrack to a)
-.*?     # non-greedy (will try to match extra characters until it matches 1)
-```
-
-* capture
+* re.findall
 
 ```py
+re.findall("{[^{}]+}", "{A}, {{B}} {{C}, {D}, E}")        # Nested Parenthesis
+re.findall("\((?:1|82)\)", "(82) (821) (1) 82 1")         # phone number
+re.findall("(?i)\d{2}:\d{2}(?:am|pm)", "02:40pm 12:29AM") # Non capture group
+re.findall(r'(.*?)D', "ABCD, ABD")                        # Grap little as possible
+re.findall(r'([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)', "rbtmd10@gmail.com, fakeemail@@f.com")  # email
+
 ex = 'made|up string*.to>>>>Test----   2""""""한국different~regex23-methods'
-
-re.search('\w+, ex)              <re.Match object; span=(0, 4), match='made'>
-
-#"\d{4}"
-re.split('\s', ex)  # ['made|up', 'string*.to>>>>Test----', '', '', '2""""""한국different~regex23-methods']
-re.split('\s+', ex) # ['made|up', 'string*.to>>>>Test----', '2""""""한국different~regex23-methods']
-re.split('\w+', ex) # ['', '|', ' ', '*.', '>>>>', '----   ', '""""""', '~', '-', '']
-re.split('\W+', ex) # ['made', 'up', 'string', 'to', 'Test', '2', '한국different', 'regex23', 'methods']
-
-dr = r'\d{2}'
 re.findall('\S+', ex)     # ['made|up', 'string*.to>>>>Test----', '2""""""한국different~regex23-methods']
 re.findall('\w+', ex)     # ['made', 'up', 'string', 'to', 'Test', '2', '한국different', 'regex23', 'methods']
 re.findall(dr, ex)        # ['23']
 re.findall('\w{4}\-', ex) # ['Test-', 'ex23-']
-re.sub('\W+', ' ', ex)) # made up string to Test 2 한국different regex23 methods
+```
+
+* re.search
+
+```py
+txt = "The rain in Spain"
+x = re.search(r"\bS\w+", txt)
+
+print(x.string)    # "The rain in Spain"
+ex = 'made|up string*.to>>>>Test----   2""""""한국different~regex23-methods'
+re.search('\w+', ex) #   <re.Match object; span=(0, 4), match='made'>
 re.search('\w+', ex)    # end : 4, group : made, groupdict : {}, groups : (), span : (0, 4), start : 0
 ```
 
-```py
-"\n"               # references the nth capturing group
-"^([aeiou]).+\1$"  # Starts and End with same vowel
-"^\d\d(-?)\d\d\1\d\d\1\d\d"  # 12345678 or 12-34-56-78
-
-一-龥       # Chineses Character
-가-힇       # Korean Character
-ぁ-ゔ|ァ-ヴー|々〆〤     # Japanese Character
-
-# Length
-{5}     # five character
-{2,6}   # between 2, 6
-+ / *   # 1 / 0 or more
-?       # optional
-```
-
-* Conditional
+* re.split
 
 ```py
-(cat | dog)  # cat or dog
+ex = 'made|up string*.to>>>>Test----   2""""""한국different~regex23-methods'
+
+re.split('\s', ex)  # ['made|up', 'string*.to>>>>Test----', '', '', '2""""""한국different~regex23-methods']
+re.split('\s+', ex) # ['made|up', 'string*.to>>>>Test----', '2""""""한국different~regex23-methods']
+re.split('\w+', ex) # ['', '|', ' ', '*.', '>>>>', '----   ', '""""""', '~', '-', '']
+re.split('\W+', ex) # ['made', 'up', 'string', 'to', 'Test', '2', '한국different', 'regex23', 'methods']
 ```
 
-* Type
+* re.sub
 
-```sh
-\w      # Unicode letter, ideogram, digit, underscore  ; Capital <>
-\d | \D # digit | Non-digit
-\s | \S # space, tab, newline | non-space, tab, newline
-\t      # tab
+```py
+re.sub('\W+', ' ', ex) # made up string to Test 2 한국different regex23 methods
 ```
 
 > list
@@ -666,26 +668,25 @@ range(0, 5)     # [0, 1, 2, 3, 4, 5]
 [1,2,3].insert(0, 4)  # [4, 1, 2, 3]
 ```
 
-> collections.deque
-
-* [deque](https://docs.google.com/forms/d/12yDxm3jPOLbyR8Fc9dJ-6yOGz9arfs-iVIiA1s_mTlM/edit)
+* collections.deque
+  * [deque](https://docs.google.com/forms/d/12yDxm3jPOLbyR8Fc9dJ-6yOGz9arfs-iVIiA1s_mTlM/edit)
 
 ```py
 deque([iterable[, maxlen]])  # if deque is full and item added, item is discarded on other side
 append(x)     # Add x to the right side of the deque
-appendleft(x)   # Add x to the left side of the deque
-clear()     # Remove all elements from the deque leaving it with length 0
-copy()      # Shallow copy of the deque
-count(x)    # Number of deque elements equal to x
-extend(iterable)  # Extendleft(iterable)
-full()      # Return True if the queue is full
+appendleft(x) # Add x to the left side of the deque
+clear()       # Remove all elements from the deque leaving it with length 0
+copy()        # Shallow copy of the deque
+count(x)      # Number of deque elements equal to x
+full()        # Return True if the queue is full
 index(x[, start[, stop]])  # Position of x in the deque
-insert(i, x)    # Index error if full
-pop()     # Remove and return an element from the right
+insert(i, x)  # Index error if full
+pop()         # Remove and return an element from the right
 popleft()     # Remove and return an element from the left
-remove(value)   # Remove the first occurrence of value
+remove(value) # Remove the first occurrence of value
 reverse()     # Reverse elements of the deque in-place
 rotate(n=1)   # Rotate the deque n steps to the right
+extend(iterable)  # Extendleft(iterable)
 ```
 
 * Example
@@ -753,37 +754,37 @@ class MyLinkedList(object):
 
 ```py
 class LRUCache:
-    def __init__(self, MSize):
-        self.size = MSize
-        self.cache = {}
-        self.next, self.before = {}, {}
-        self.head, self.tail = '#', '$'
-        self.connect(self.head, self.tail)
+  def __init__(self, MSize):
+    self.size = MSize
+    self.cache = {}
+    self.next, self.before = {}, {}
+    self.head, self.tail = '#', '$'
+    self.connect(self.head, self.tail)
 
-    def connect(self, a, b):
-        self.next[a], self.before[b] = b, a
+  def connect(self, a, b):
+    self.next[a], self.before[b] = b, a
 
-    def delete(self, key):
-        self.connect(self.before[key], self.next[key])
-        del self.before[key], self.next[key], self.cache[key]
+  def delete(self, key):
+    self.connect(self.before[key], self.next[key])
+    del self.before[key], self.next[key], self.cache[key]
 
-    def append(self, k, v):
-        self.cache[k] = v
-        self.connect(self.before[self.tail], k)
-        self.connect(k, self.tail)
-        if len(self.cache) > self.size:
-            self.delete(self.next[self.head])
+  def append(self, k, v):
+    self.cache[k] = v
+    self.connect(self.before[self.tail], k)
+    self.connect(k, self.tail)
+    if len(self.cache) > self.size:
+      self.delete(self.next[self.head])
 
-    def get(self, key):
-        if key not in self.cache: return -1
-        val = self.cache[key]
-        self.delete(key)
-        self.append(key, val)
-        return val
+  def get(self, key):
+    if key not in self.cache: return -1
+    val = self.cache[key]
+    self.delete(key)
+    self.append(key, val)
+    return val
 
-    def put(self, key, value):
-        if key in self.cache: self.delete(key)
-        self.append(key, value)
+  def put(self, key, value):
+    if key in self.cache: self.delete(key)
+    self.append(key, value)
 ```
 
 ### Sort
@@ -803,9 +804,9 @@ random.sort(key=takeSecond)     # Sort by custom function
 
 ### Hashable
 
+> set
+
 * [Set](https://docs.google.com/forms/d/1YFC2YHaTgsQxkSEtDufCzpiKTz43Nr8Iw5Hn7grw2oA/edit)
-* [Dictionary](https://docs.google.com/forms/d/1KUGnlx0pG4nUksDXLK00ZZZATBUBQfGVUZw2SxLTP_U/edit)
-* [Counter](https://docs.google.com/forms/d/1m1F3h8PzaSuVO6rqFZko9amMXTo_-NNj1UdfiD5ihGU/edit)
 * not sorted by default
 
 ```py
@@ -830,29 +831,16 @@ remove(elem)  # Remove elem from the set. Raises KeyError if elem is not in the 
 
 > Dictionary
 
-* create dict
-
-```py
-dic = { "model": "Mustang", "year": 1964}
-dictionary = dict(zip(['a', 'b', 'c'], [1, 2, 3]))
-
-d = {}
-for key, value in pairs:
-  d.setdefault(key, []).append(value)
-return d
-```
-
-* Methods
+* [Dictionary](https://docs.google.com/forms/d/1KUGnlx0pG4nUksDXLK00ZZZATBUBQfGVUZw2SxLTP_U/edit)
 
 ```py
 dict.fromkeys(iterable[, value])
 items()   # iter((key, value))
-keys()  # iter(key)
+keys()    # iter(key)
 values()  # iter(value)
 
-d[key]  # item of d with key key. Raises a KeyError if key is not in the map.
+d[key]    # item of d with key key. Raises a KeyError if key is not in the map.
 clear()   # remove all items from the dictionary
-iter(d)   # an iterator over the keys
 list(d)   # a list of all the keys
 len(d)  # the number of items
 pop(key[, default]) # If key in d, remove it and return, else return default (error if no default)
@@ -866,17 +854,34 @@ thisdict = dict.fromkeys(x, y)  # {'key1': 0, 'key2': 0, 'key3': 0}
 thisdict = dict.fromkeys(x)   # {'key1': None, 'key2': None, 'key3': None}
 ```
 
-* combine dict
+* iter(d)  
+  * an iterator over the keys
 
 ```py
-sorted_x = sorted(x.items(), key=lambda kv: kv[1])  # Sort by value
-inv_map = {v: k for k, v in my_map.items()}  # reverse key, value
+vowels = ['a', 'e', 'i', 'o', 'u']
+print(next(iter(vowels)))  # prints 'a'
 ```
 
-> collections
+* Example
 
-* Counter
+```py
+# create dict
+dic = { "model": "Mustang", "year": 1964}
+dictionary = dict(zip(['a', 'b', 'c'], [1, 2, 3]))
+
+d = {}
+for key, value in pairs:
+  d.setdefault(key, []).append(value)
+return d
+
+# combine dict
+sorted_x = sorted(x.items(), key=lambda kv: kv[1]) # Sort by value
+inv_map = {v: k for k, v in my_map.items()}        # reverse key, value
+```
+
+* collections.Counter
   * subclass of dict
+  * [Counter](https://docs.google.com/forms/d/1m1F3h8PzaSuVO6rqFZko9amMXTo_-NNj1UdfiD5ihGU/edit)
 
 ```py
 from collections import Counter
@@ -955,8 +960,6 @@ for method in [method for method in dir(match) if not method.startswith('_')]:
 * iterator
 
 ```py
-vowels = ['a', 'e', 'i', 'o', 'u']
-print(next(iter(vowels)))  # prints 'a'
 f = open("demofile.txt", "r")
 print(f.read())
 fouts = {idx: open(os.path.join(tmp_dir, str(idx)), 'w') for idx in range(num_chunks)}
@@ -1124,20 +1127,20 @@ reduce(lambda x, y: x ^ y, nums)
 
 * Variable
 * Can be accessed through class name and any instance of the class
-* If access using self.<ClassVariable>, the value is changed only for the instance
+* If access using `self.<ClassVariable>`, the value is changed only for the instance
 
 * Method
 * dunder method used with __<dunder_name>__
 
 ```py
-add     # when a + b
-code    # co_varnames
-hash    # immutable built-in objects are hashable | hashable equal objects have same hash
-init    # called to initialize the object | cannot return value
-len     # same as len('test')
-new(cls)  # called when object is created | cls represents class that is needed to be instantiated
+add      # when a + b
+code     # co_varnames
+hash     # immutable built-in objects are hashable | hashable equal objects have same hash
+init     # called to initialize the object | cannot return value
+len      # same as len('test')
+new(cls) # called when object is created | cls represents class that is needed to be instantiated
 
-repr    # to be unambiguous, compare / readable
+repr     # to be unambiguous, compare / readable
 return "Class: '{}' \n{!r}".format(self.__class__.__name__, self.__dict__)  # repr for class
 
 slots   # only allocate space for a fixed set of attributes in slots, Reduce RAM → PyPy by default
@@ -1458,12 +1461,12 @@ if __name__ == "__main__":
 # 1. Nested decorator, func = dec2(dec1(func))
 @dec2
 @dec1
-def func(arg1, arg2, ...):		
+def func(arg1, arg2, ...):
   pass
 
 # 2. Multiple args, same as func = decomaker(argA, argB, ...)(func)
 @decomaker(argA, argB, ...)
-def func(arg1, arg2, ...):		
+def func(arg1, arg2, ...):
   pass
 
 # 3. Getter, Setter, Deleter
@@ -1483,7 +1486,7 @@ def fullname(self):
   self.first = None
   self.last = None
 
-class classmethod(object):		# classmethod
+class classmethod(object):    # classmethod
   def __init__(self, method):
     self.method = method
   def __get__(self, instance, cls):
@@ -1496,31 +1499,32 @@ class classmethod(object):		# classmethod
 
 > Proxy
 
+* class functioning as an interface to something else
+
 ```py
 class Image:
   def __init__(self, filename):
-  self._filename = filename
+    self._filename = filename
 
   def load_image_from_disk(self):
-  print("loading " + self._filename)
+    print("loading " + self._filename)
 
   def display_image(self):
-  print("display " + self._filename)
+    print("display " + self._filename)
 
 
 class Proxy:
   def __init__(self, subject):
-  self._subject = subject
-  self._proxystate = None
+    self._subject = subject
+    self._proxystate = None
 
 
 class ProxyImage(Proxy):
   def display_image(self):
-  if self._proxystate == None:
-  self._subject.load_image_from_disk()
+    if self._proxystate == None:
+      self._subject.load_image_from_disk()
       self._proxystate = 1
     print("display " + self._subject._filename)
-
 
 proxy_image1 = ProxyImage(Image("Dog"))
 proxy_image2 = ProxyImage(Image("Cat"))

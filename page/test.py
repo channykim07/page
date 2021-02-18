@@ -9,6 +9,7 @@ import line_profiler
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from .models.team import Team
 from .models.doc import Doc
+from .models.mock import Mock
 from .models.member import Member
 from .models.problem import Problem
 from .database import remote_db, local_db
@@ -46,12 +47,6 @@ class PageTester(unittest.TestCase):
     self.assertGreater(len(Problem.get_baekjoon_problems_level(30)), 5)
     self.assertGreater(len(Problem.get_baekjoon_problems(28, 31)), 50)
     self.assertTrue(Member.update_baekjoon_solved(remote_db.get("member", "rbtmd1010")))
-
-    gist = Gist.get_gist("e7f4b99c5e625651abdeef29e328a423")
-    print(gist)
-    self.assertGreater(len(gist.html), 100)
-    self.assertTrue(Gist.get_all_gist(["c81940d03e79296936616c733d2b4f57", "e7f4b99c5e625651abdeef29e328a423"]))
-    self.assertIsNotNone(Doc.get_doc("C++", "1dtPPhF9V5z5-mG44ixMHMrEK7j8QkEOVV_XLOWxO060"))
 
   @time_profile
   def test_ui(self):

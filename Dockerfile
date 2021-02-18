@@ -20,10 +20,6 @@ RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key
   pip install -r requirements.txt
 COPY page/ /page
 RUN python -m page.test;
-RUN [ "$TEST" = true ] || python -m page.models.member;
-RUN [ "$TEST" = true ] || python -m page.models.problem;
-RUN [ "$TEST" = ture ] || python -m page.models.doc;
-RUN [ "$TEST" = true ] || python -m page.models.gist;
-RUN [ "$TEST" = true ] || python -m page.database;
+RUN [ "$TEST" = true ] || python -m page.setup;
 
 CMD gunicorn --bind :$PORT --workers 1 --threads 12 "page.app:create_app()";

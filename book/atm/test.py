@@ -23,10 +23,11 @@ class ATMTester(unittest.TestCase):
     self.assertTrue(self.model.deposit(self.test_small_amount))
     self.assertFalse(self.model.withdraw(self.test_big_amount))
     self.assertTrue(self.model.withdraw(self.test_small_amount))
-    
+
   def tearDown(self):
     pass
     # self.model.delete_all_user()
+
 
 if __name__ == "__main__":
   unittest.main()

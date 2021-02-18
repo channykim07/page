@@ -23,8 +23,7 @@ for document_path in PATH.PROBLEM.iterdir():
         problem = problem_path.stem     # BJ_1234
         problem = local_db.get('problem', problem_path.stem)
         problem.category_id = document_path.stem
-        problem.solution_link = f'<a href="https://github.com/SeanHwangG/private/blob/main/practice/{category}/{problem}.md" style="color:blue;">solution</a>' 
+        problem.solution_link = f'<a href="https://github.com/SeanHwangG/private/blob/main/practice/{category}/{problem}.md" style="color:blue;">solution</a>'
         local_db.add('problem', problem, True)
       except Exception as e:
         logger.info(e)
-      # document_id2obj[document_path.name[:-5]] = dict2class(collection_id, json.load(f))

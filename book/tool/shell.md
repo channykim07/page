@@ -311,10 +311,13 @@ mv -t dest src1 scr2  # move multiple item at once
 
 > stash
 
+![stash](images/20210220_021545.png)
+
 ```sh
-show (-p)            # To show files changed in the last stash (content of the stashed files)
-clear                # clear stashed files
-list                 # see lists of stashed files
+pop ( -- filename)  # reapply all conflict (only filename)
+show (-p)           # To show files changed in the last stash (content of the stashed files)
+clear               # clear stashed files
+list                # see lists of stashed files
 
 git checkout stash -- .            # overwrite current file
 git checkout stash@{0} -- fn    # stash pop certain files
@@ -327,7 +330,7 @@ git checkout stash@{0} -- fn    # stash pop certain files
 -r                   # List remote branches
 -v                   # List all currently configured remotes
 add <name> <url>     # Adds a remote <name> for repository at <url> / add origin for new
-
+rm origin            # remove existing origin
 
 get-url              # 
 set-url <name> <new> # Changes URL remote points to
@@ -565,42 +568,43 @@ fetch && origin/master  # Merge remote master to the local branch
 
 ### CLI
 
-```
+```sh
 gh gist create filename    # push to gist
-```
 
-```
 ?file=afile            # only one file in gist
 ```
 
 ### workflow
 
-> name
+* name
+  * workflow name GitHub displays on your repository's actions page. 
+  * If omit name, GitHub sets it to workflow file path relative to root of the repository
 
-* workflow name GitHub displays on your repository's actions page. 
-* If omit name, GitHub sets it to workflow file path relative to root of the repository
+* action
+  * standalone commands that are combined into steps to create a job
+  * smallest portable building block of a workflow
 
-> action
+* events
+  * specific activity that triggers a workflow
 
-* standalone commands that are combined into steps to create a job
-* smallest portable building block of a workflow
+* workflow
+  * an automated procedure that you add to your repository. 
+  * made up of one or more jobs and can be scheduled or triggered by an event.
 
-> on push | [push, pull]
 
-* Specify the event that automatically triggers the workflow file
 
-> events
+### action.yml
 
-* specific activity that triggers a workflow
+* secret
+  * can be accessed with `${{ secrets.STAGING_DB_HOST }}`
 
-> workflow
+![github secret](images/20210220_012131.png)
 
-* an automated procedure that you add to your repository. 
-* made up of one or more jobs and can be scheduled or triggered by an event.
 
-> action.yml
+* on push | [push, pull]
+  * Specify the event that automatically triggers the workflow file
 
-```
+```yml
 name: CI
 on:         # Controls when the action will run. 
   push:     # Triggers the workflow on push or pull request events but only for the main branch

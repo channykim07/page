@@ -283,6 +283,10 @@ $HOME/Library/Application Support/Code/User/settings.json
 
 * show all images and containers
 
+> gitlens
+
+![file diff](images/20210220_013415.png)
+
 > Paste Image
 
 * sudo apt-get update
@@ -959,25 +963,24 @@ $$
 * Dynamic contents (API Support in new version)
 * Customizing (Stylish extension)
 
-### _Error
+> _Error
 
-> TypeError: cb.apply is not a function inside graceful-fs
+* TypeError: cb.apply is not a function inside graceful-fs
 
 ```sh
 cd /usr/local/lib/node_modules/gitbook-cli/node_modules/npm/node_modules/
 npm install graceful-fs@4.2.0 --save
 ```
 
-> TypeError: Cannot read property 'pipesCount' of undefined
+* TypeError: Cannot read property 'pipesCount' of undefined
 
 ```sh
 npm install gitbook-cli@2.1.2 --global
 ```
 
-> Wrong codeblock output
-
-* Codeblock \(\`\`\`\) must has new line before starting
-* sub list must be preceded by at least 4 space
+* Wrong codeblock output
+  * Codeblock \(\`\`\`\) must has new line before starting
+  * sub list must be preceded by at least 4 space
 
 > New version
 
@@ -1555,6 +1558,18 @@ nc catserver 1234
 ```
 
 ### Orchestration
+
+> Error
+
+* docker-compose cannot use gcloud credential helper on Linux
+
+```sh
+docker logout
+docker login
+
+gcloud auth activate-service-account --key-file=[키 파일]
+gcloud auth configure-docker
+```
 
 > machine
 
