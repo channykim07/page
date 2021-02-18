@@ -21,17 +21,16 @@ $$
 $$
 
 * special numbers
-    * NaN       (1 / not 0)
-    * infinity  (1 / 0)
-    * Denormalized number (0 / not 0)
+  * NaN       (1 / not 0)
+  * infinity  (1 / 0)
+  * Denormalized number (0 / not 0)
 
-```
+```cpp
 void main() {
   float a = 1. / 0.f;
   printf("a : %f \n", a);
 }
 ```
-
 
 > Variable
 

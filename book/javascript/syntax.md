@@ -1,4 +1,6 @@
-# IO
+# Syntax
+
+## IO
 
 > comment
 
@@ -6,7 +8,8 @@
 //      // single line
 /* */    // multi line
 ```
-## Print
+
+### Print
 
 ```js
 console.log();      
@@ -15,13 +18,13 @@ console.table([])       // print in table foramt
 console.log(JSON.stringify(data))   // print in nice format
 ```
 
-## Error
+> Error
 
 ```js
 console.trace();        // print stack trace when error
 ```
 
-## Keywords
+### Keywords
 
 > const
 
@@ -58,7 +61,7 @@ delete x;       // Syntax error
 function x(p1, p2) {};  
 ```
 
-# Operation
+## Operation
 
 > Backticks
 
@@ -125,7 +128,7 @@ trunc()
 var quotient = Math.floor(y/x);
 ```
 
-## Condition
+### Condition
 
 > if
 
@@ -148,7 +151,7 @@ switch(expression) {
 }
 ```
 
-## Variable
+### Variable
 
 * All JavaScript values, except primitives, are objects 
 * Don’t Declare Number, String, Boolean Objects → slows down execution speed
@@ -238,7 +241,7 @@ function readLine() {
 process.stdout.write("Download" + data.length + "%\r"); // overwrite line
 ```
 
-## Iterables
+### Iterables
 
 * in vs of
 
@@ -358,7 +361,7 @@ Array.prototype.myUcase = function() {
 };
 ```
 
-## Hashable
+### Hashable
 
 > Set
 
@@ -414,7 +417,7 @@ where: {
 }
 ```
 
-## Time
+### Time
 
 > Date
 
@@ -455,7 +458,7 @@ for (var d = new Date(2012, 0, 1); d <= now; d.setDate(d.getDate() + 1)) {
 ```
 
 
-## Dom
+### Dom
 
 > document
 
@@ -514,9 +517,9 @@ search       // query portion of the URL
 hash         // anchor portion of the URL
 ```
 
-# OOP
+## OOP
 
-## Function
+### Function
 
 * function is called with a missing argument, the value of the missing argument is set to undefined
 * Pure function don’t attempt to change inputs, and always return the same result for the same inputs
@@ -596,4 +599,104 @@ alert(counter1.value()); // 2.
 counter1.decrement();
 alert(counter1.value()); // 1.
 alert(counter2.value()); // 0.
+```
+
+### Class
+
+* Private variable is started with #
+* JavaScript, class methods are not bound by default → arrow function
+
+* this
+
+```js
+class Foo {
+  constructor(name){
+    this.name = name
+  }
+  display(){
+    console.log(this.name);
+  }
+}
+
+var foo = new Foo('Saurabh');
+foo.display(); // Saurabh
+
+// The assignment operation below simulates loss of context 
+// similar to passing the handler as a callback in the actual 
+// React Component
+var display = foo.display; 
+display(); // TypeError: this is undefined
+```
+
+* Mixin
+
+```js
+const Tracer = (SuperClass) => class extends SuperClass { 
+    trace(msg) { console.info(`Message: ${msg}`); } 
+}
+
+class NiceWidget extends Tracer(Widget) { drawingNicely() { this.trace(); } }
+```
+
+### Concurrency
+
+* Race Control
+
+```js
+const foods = ["pizza"];
+function getFoods() {
+    setTimeout(() => {
+        foods.forEach(food => { document.body.innerHTML += `<li>${food}</li>`; });
+    }, 1000);
+}
+
+function addFood(food) {
+    setTimeout(() => {
+        foods.push(food);
+    }, 1000);
+}
+
+addFood("hotdog");
+getFoods();                // doesn’t render hotdog
+```
+
+* Await
+
+async function init() {
+  await addFood("hotdog");
+  getFoods();
+}
+init();
+
+* Callback
+
+```js
+function addFood(food, callback) {
+    setTimeout(() => {
+        foods.push(food);
+        resolve();
+    }, 1000);
+}
+addFood("hotdog", getFoods);
+```
+
+* Promise
+
+```js
+function addFood(food) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      foods.push(food);
+      resolve();
+    }, 1000);
+  });
+}
+
+addFood("hotdog").then(getFoods);
+```
+
+* multiple promise
+
+```js
+Promise.all([promise1, promise2]).then(values=>console.log(values))
 ```

@@ -81,6 +81,56 @@ $$
 
 ### Hashable
 
+* cuckoo hashing
+  * Use two hash functions
+  * O(1) : worst case insert
+
+![](images/20210218_232251.png)
+
+```py
+class ListNode:
+  def __init__(self, key = None, val = None):
+    self.pair = (key, val)
+    self.next = None
+
+class HashMap:
+  def __init__(self):
+    self.m = 1000
+    self.h = [ListNode() for _ in range(self.m)]
+
+  def put(self, key, val):
+    idx = key % self.m
+    cur = self.h[idx]
+    while True:
+      if cur.pair[0] == key:
+        cur.pair = (key, val)
+        return
+      if cur.next == None:
+        break
+      cur = cur.next
+    cur.next = ListNode(key, val)
+      
+  def get(self, key):
+    idx = key % self.m
+    cur = self.h[idx]
+    while cur:
+      if cur.pair[0] == key:
+        return cur.pair[1]
+      cur = cur.next
+    return -1
+
+  def remove(self, key):
+    idx = key % self.m
+    cur = prev = self.h[idx]
+    cur = cur.next
+    
+    while cur:
+      if cur.pair[0] == key:
+        prev.next = cur.next
+        break
+      cur, prev = cur.next, prev.next
+```
+
 ### Sort
 
 > Selction Sort
@@ -299,9 +349,6 @@ r  # radius from the z-axis
 φ   # the angle that it makes with respect to the z-axis.
 ```
 
-
-
-
 > Convex Haul
 
 ![alt](images/20210218_004049.png)
@@ -386,6 +433,14 @@ $$ |O S(I)| \leq\left|O S^{\prime}(I)\right|=\left|\{g\} \cup S\left(I^{\prime}\
 * Bounding function : kill some live nodes without actually expanding them
 
 ### LinkedList
+
+Type | Access | Search | Insert | Delete
+--- | --- | --- | --- | ---
+Array | 1 | n | n | n
+Stack | n | n | 1 | 1
+Queue | n | n | 1 | 1
+Singly-Linked | n | n | 1 | 1
+Doubly-Linked | n | n | 1 | 1
 
 ### Graph
 
@@ -634,13 +689,86 @@ Every time DFS increments cc, you have found a new SCC.
 Complexity    O(V + E)
 ```
 
+* Union find
+
+```py
+def find(x):
+    if x != UF[x]:
+        UF[x] = find(UF[x])
+    return UF[x]
+def union(x, y):
+    UF[find(x)] = find(y)
+
+def countComponents(edges: List[List[int]]) -> int:
+    UF = list(range(len(edges)))
+    for x, y in edges:
+        union(x, y)
+     return len({find(x) for x in range(len(edges))})
+```
+
 ### Knapsack
 
 ### Tree
 
 * [Tree](https://docs.google.com/forms/d/1_ofN6F79XzQAos7-Xl3ZKjcz-N4kMF4EUGlPX3yenpg/edit)
+* Connected and has no cycles (n-1 edges).
+* Root has no incoming edges and non-root has exactly one incoming edge from parent
+* root vertex r is at level 0
+* Binary tree is a rooted tree in which every (internal) vertex has no more than two children.
+* Traveral
 
-> Trie
+![](images/20210218_232541.png)
+
+* Huffman encoding
+  * Tree must be full tree
+  * Exists an optimal tree where two lowest frequent symbols must be siblings at the two lowest level
+  * The two longest codewords have the same length
+
+* Entropy of tree
+
+$$
+\sum_{i} p_{i} \log _{2} \frac{1}{p_{i}}
+$$
+
+![](images/20210218_232413.png)
+
+> Data Structure
+
+* Binary index tree
+  * Fast cumulative sum query → easier to implement than Segment Tree
+  * Time Complexity: O(n) (Build)
+  * Time Complexity: O(log n) (Range Query, update one element)
+
+![](images/20210218_232741.png)
+
+```py
+# Count smaller than self
+class BIT:
+  def __init__(self, n):
+    self.n = n + 1
+    self.sums = [0] * self.n
+  
+  def update(self, i, delta):
+    while i < self.n:
+      self.sums[i] += delta
+      i += i & (-i)
+  
+  def query(self, i):
+    res = 0
+    while i > 0:
+      res += self.sums[i]
+      i -= i & (-i)
+    return res
+
+def countSmaller(self, li):
+  ranks, bit, ret = {e : i + 1 for i, e in enumerate(sorted(li))}, self.BIT(len(li)), []
+  for e in reversed(li):
+    ret.append(bit.query(ranks[e] - 1))
+    bit.update(ranks[e], 1)
+  return ret[::-1]
+```
+
+* Trie
 
 ```py
 class Node:
@@ -681,9 +809,85 @@ class Trie:
 
 ![alt](images/20210206_212312.png)
 
+* Range Greatest Common Divisor
+* Minimum query
+  * Space O(N logN)
+  * Run-time (build) O(N logN)
+  * Run-time (Query) O(1)
+
+![](images/20210218_233059.png)
+
+```py
+"""
+[10, 6, -7, -8, 0, 0, 0, 0, 0]
+[6, 5, -7, -8, 0, 0, 0, 0, 0]
+[5, -7, -8, 0, 0, 0, 0, 0, 0]
+[-7, -7, -8, 0, 0, 0, 0, 0, 0]
+[9, -8, -8, 0, 0, 0, 0, 0, 0]
+[-8, -8, -8, 0, 0, 0, 0, 0, 0]
+[2, 2, 0, 0, 0, 0, 0, 0, 0]
+[4, 4, 0, 0, 0, 0, 0, 0, 0]
+[20, 0, 0, 0, 0, 0, 0, 0, 0]
+"""
+def build_ST(l):
+  n = len(l)
+  ST = [l[i] + [0]*(n - 1) for i in range(n)]
+  j = 1
+  while (1 << j) <= n:
+    i = 0
+    while (i + (1 << j) - 1) < n:
+      ST[i][j] = min(ST[i][j - 1], ST[i + (1 << (j - 1))][j - 1])
+      i+=1
+  j+=1
+  return ST
+
+def query(l, r, ST):
+  j = math.log2rR - l + 1)
+  return min(ST[L][j], ST[R - (1 << j) + 1][j])
+```
+
+
 ### Segment_Tree
 
-[Lazy segment tree](https://www.youtube.com/watch?v=xuoQdt5pHj0)
+* m number of Minimum / Sum Range Query + n elements in array
+* Use lazy propagation segment tree to support range update
+  * Time Complexity: O(n) (Build tree)
+  * Space Complexity: O(n)
+  * Time Complexity: O(log(n)) (Query)
+
+![](images/20210218_232854.png)
+
+```py
+def range_minimum_query(ST, ST_l, ST_r, l, r, idx):
+    if l <= ST_l and r >= ST_r:
+        return ST[idx]
+
+    if ST_r < l or ST_l > r:
+        return math.inf
+
+    mi = ST_l + (ST_r - ST_l) // 2
+    min(range_minimum_query(ST, ST_l, mi, l, r, 2*idx + 1), RMQ(ST, mi + 1, ST_r, l, r, 2*idx + 2))
+
+def buildST(list, l, r, ST, idx):
+    if l == r:
+        ST[idx] = list[l]
+        return ST[idx]
+
+    mid = l + (r - l) // 2
+    left = buildST(list, l, mid, ST, idx*2 + 1)
+    right = buildST(list, mid + 1, r, ST, idx*2 + 2)
+
+    if left <= right:
+        ST[idx] = left
+    else:
+        ST[idx] = right
+
+    return ST[idx]
+```
+
+> Lazy Segment Tree
+
+* [Lazy segment tree](https://www.youtube.com/watch?v=xuoQdt5pHj0)
 
 ## ETC
 

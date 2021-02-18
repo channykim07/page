@@ -121,6 +121,9 @@ int main() {
 }
 ```
 
+* noexcept
+  * If expression evaluates to true, the function is declared not to throw any exceptions
+
 ### Casting
 
 > static_cast
@@ -497,12 +500,141 @@ int main() {
 }
 ```
 
-
 ## Operation
 
 ![alt](images/20210208_171810.png)
 
+### Conditional
+
+> goto
+
+```cpp
+int n=10;
+mylabel:
+cout << n << ", ";
+n--;
+if (n>0) goto mylabel;
+```
+
+> case
+
+* create jump table → optimize assembly code
+* optimize when case value should be small, sorted 
+
+```cpp
+// read a, b, c
+#include <stdio.h>
+int main() {
+  char input;
+  printf("알파벳 : ");
+  scanf("%c", &input);
+  switch (input) {
+    case 'a':
+      printf("에이 \n");
+      break;
+    case 'b':
+      printf("비 \n");
+      break;
+    default:
+      printf("죄송해요.. 머리가 나빠서 못 읽어요  \n");
+      break;
+  }
+  return 0;
+}
+```
+
 ### Iterable
+
+> memory
+
+* use smart pointer unique, shared, weak using
+
+* Shared Pointer
+  * Reference count
+
+```cpp
+#include <iostream>
+#include <memory>
+#include <vector>
+
+using namespace std;
+
+class A : public enable_shared_from_this<A> {
+  int *data;
+
+ public:
+  A() {
+    data = new int[100];
+    cout << "Acquired" << endl;
+  }
+
+  ~A() {
+    cout << "Release" << endl;
+    delete[] data;
+  }
+
+  shared_ptr<A> get_shared_ptr() { return shared_from_this(); }  // shared_ptr<A>(this); fail
+};
+
+int main() {
+  vector<shared_ptr<A>> vec;
+  vec.push_back(shared_ptr<A>(new A()));  // Acquired
+  vec.push_back(shared_ptr<A>(vec[0]));
+  vec.push_back(vec[1]->get_shared_ptr());
+
+  cout << vec[0].use_count() << "\n";  // 3
+  vec.erase(vec.begin());
+  cout << vec[0].use_count() << "\n";  // 2
+  vec.erase(vec.begin());
+  cout << vec[0].use_count() << "\n";  // 1
+  vec.erase(vec.begin());              // Release
+}
+```
+
+* Unique pointer
+  * automatically freed → cannot copy
+
+```cpp
+std::unique_ptr<Entity> entity = std::make_shared<Entity>();
+```
+
+```cpp
+#include <iostream>
+#include <memory>
+#include <vector>
+
+using namespace std;
+
+class Data {
+  int *data;
+ public:
+  Data() {
+    cout << "Acquired" << endl;
+    data = new int[100];
+  }
+  void some() { cout << "Pointer" << endl; }
+  ~Data() {
+    cout << "Release" << endl;
+    delete[] data;
+  }
+};
+
+void func_with_unique(Data *ptr) { // unique_ptr<Data>& wrong!
+  ptr->some();
+}
+
+int main() {
+  unique_ptr<Data> pa(new Data());  // Acquired (same as auto pa = make_unique<Data>();)
+  cout << "[pa]";                   // [pa]
+  pa->some();                       // Pointer
+
+  unique_ptr<Data> pb = move(pa);  // pa is now dangling pointer
+  cout << "[pb]";                  // [pb]
+  pb->some();                      // Pointer
+  func_with_unique(pb.get());      // Pointer
+  // Release
+}
+```
 
 > string
 
@@ -641,7 +773,7 @@ vector<int> stringToVector(string input) {
 vector<int> vect{ 10, 20, 30 };
 ```
 
-> <chrono>
+> chrono
 
 * sleep
 
@@ -686,6 +818,120 @@ int main() {
   auto finish = std::chrono::high_resolution_clock::now();
   std::cout << duration_cast<milliseconds>(finish - start).count() << "ms\n";  // 1001ms
 }
+```
+
+### Sort
+
+```cpp
+// Inversion Count : sum of (mid - i) during merge step
+void mergeSort(int arr[], int l, int r) {
+    if (l < r) {
+        int m = l+(r-l)/2;
+        mergeSort(arr, l, m);
+        mergeSort(arr, m+1, r);
+  
+        merge(arr, l, m, r);
+    }
+}
+
+void merge(int arr[], int l, int m, int r) {
+    int n1 = m - l + 1, n2 = r - m;
+    int L[n1], R[n2];
+
+    for (i = 0; i < n1; i++)
+        L[i] = arr[l + i];
+    for (j = 0; j < n2; j++)
+        R[j] = arr[m + 1+ j];
+
+    int i = 0, j = 0, k = l;
+    while (i < n1 && j < n2) {
+        if (L[i] <= R[j])
+            arr[k++] = L[i++];
+        else
+            arr[k++] = R[j++];
+    }
+
+    while (i < n1)
+        arr[k++] = L[i++];
+
+    while (j < n2)
+        arr[k++] = R[j++];
+}
+```
+
+* Quicksort
+
+```cpp
+int partition (int arr[], int low, int high) { 
+    int pivot = arr[high]; // pivot 
+    int i = (low - 1); // Index of smaller element 
+  
+    for (int j = low; j < high; j++) { 
+        if (arr[j] <= pivot) { 
+            i++; 
+            swap(&arr[i], &arr[j]); 
+        } 
+    } 
+    swap(&arr[i + 1], &arr[high]); 
+    return (i + 1); 
+} 
+  
+void quickSort(int arr[], int low, int high) { 
+    if (low < high) { 
+        int pi = partition(arr, low, high);   
+        quickSort(arr, low, pi - 1); 
+        quickSort(arr, pi + 1, high); 
+    } 
+}
+```
+
+### Hashable
+
+> set
+
+```cpp
+erase()
+insert()
+size()
+
+auto cmp = [](int x, int y){ return x < y; };
+auto set = set<int,decltype(cmp)>(cmp);
+
+struct cmp {
+    bool operator() (int a, int b) const {
+        return ...
+    }
+};
+
+std::set<int, cmp> s;
+
+// Iterate Backward
+for (auto rit = myset.rbegin(); rit != myset.rend(); ++rit)
+cout << ' ' << *rit;
+
+// multiset erase just one element
+auto itr = my_multiset.find(value);
+if (itr!=my_multiset.end())
+    my_multiset.erase(itr);
+
+m[cur].erase(m[cur].lower_bound(next));
+```
+
+> map
+
+```cpp
+map<string, int> m(wordMap.begin(), wordMap.end());        # using range of pair
+
+auto cmp = [](int a, int b) { return a < b;};
+map<int, int, decltype(cmp)> m(cmp);
+
+map<int, int> n2m{{1, 2}};
+n2m[5]++;
+for (auto it : n2m)
+  cout << it.first << " " << it.second << endl;                # iterate
+
+mp.insert({ 2, 30 });
+mp.find(2);
 ```
 
 ## OOP
@@ -813,6 +1059,66 @@ void inheritance() {
   const Person sean = Person("tom");
   for (auto animal : animals) animal->hi();
   sean.hi();
+}
+```
+
+## Concurrency
+
+> atomic
+
+```cpp
+#include <atomic>
+#include <iostream>
+#include <thread>
+
+using namespace std;
+
+void count_n_million() {
+  atomic<int> counts(0);
+  thread threads[3];
+
+  for (int i = 0; i < 3; i++) {
+    threads[i] = thread([&]() {
+      for (int i = 0; i < 1000000; i++) counts += 1;
+    });
+  }
+  for (int i = 0; i < 3; i++) threads[i].join();
+
+  cout << "total counts \t" << counts.load() << "\n\n";
+}
+int main() { count_n_million(); }
+```
+
+> mutex
+
+```cpp
+struct Counter {
+  int value;
+  Counter() : value(0){}
+  void increment(){
+    // 1st Method
+    lock_guard<mutex> guard(mu);
+    ++value;
+
+    // 2nd Method : bad when exception is thrown between
+    mutex.lock();
+    ++value;
+    mutex.unlock();
+  }
+};
+
+int main(){
+  Counter counter;
+
+  vector<thread> threads;
+  for(int i = 0; i < 5; ++i){
+    threads.push_back(thread([&counter](){
+      for(int i = 0; i < 100; ++i){ counter.increment(); }
+    }));
+  }
+  for(auto& thread : threads) thread.join();
+  cout << counter.value << endl;
+  return 0;
 }
 ```
 

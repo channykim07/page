@@ -108,14 +108,34 @@ option ⌘ [     # Code folding
 
 ```json
 {
-"console": "integratedTerminal",     // use integrated terminal for console.log
-"sudo" : true,  // must be  used with "console": "externalTerminal" 
+  "console": "integratedTerminal",     // use integrated terminal for console.log
+  "sudo" : true,  // must be  used with "console": "externalTerminal" 
+  // add environment variable
+  "env": {"API_BASE":"https://"}  ,
+  "envFile": "${workspaceFolder}/.env" ,
+  "preLaunchTask": "myShellCommand", // run before
+  "justMyCode"  // When omitted / set true (default), restricts debugging to user-written code only
+}
 
-// add environment variable
-"env": {"API_BASE":"https://"}  ,
-"envFile": "${workspaceFolder}/.env" ,
-"preLaunchTask": "myShellCommand", // run before
-"justMyCode"  // When omitted / set true (default), restricts debugging to user-written code only
+// Run module
+{
+  "name": "Tests",
+  "type": "python",
+  "request": "launch",
+  "module": "page.test",
+  "envFile": "${workspaceFolder}/.env"
+},
+
+// Flask app
+{
+  "name": "Main Server",
+  "type": "python",
+  "request": "launch",
+  "module": "flask",
+  "env": { "FLASK_APP": "page.app:create_app()", "FLASK_ENV": "development",
+           "FLASK_RUN_PORT": "8080", "FLASK_RUN_HOST": "localhost", },
+  "args": [ "run", "--cert", "adhoc" ],
+  "jinja": true
 }
 ```
 
@@ -243,13 +263,13 @@ option ⌘ [     # Code folding
 
 * Window
 
-```
+```sh
 https://docs.microsoft.com/en-us/windows/wsl/install-win10
 ```
 
 * Mac
 
-```
+```sh
 $HOME/Library/Application Support/Code/User/settings.json
 ```
 
@@ -264,6 +284,9 @@ $HOME/Library/Application Support/Code/User/settings.json
 * show all images and containers
 
 > Paste Image
+
+* sudo apt-get update
+* sudo apt-get install -y xclip
 
 ```text
 Paste Image:Path ${currentFileDir}/images

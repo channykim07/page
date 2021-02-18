@@ -2,40 +2,45 @@
 
 ![alt](images/20210210_190539.png)
 
-> GNU (Gnu is Not Unix)
+* Posix (Portable Operating System Interface)
+  * standards specified by IEEE Computer Society for maintaining compatibility between operating systems
 
-* OS project by Free Software Foundation 
-* First free desktop environment
+* rpath
+  * designates the run-time search path hard-coded in an executable file or library
 
-> GNOME (GNU Network Object Model Environment)
+* standalone (freestanding program)
+  * no external module, library, program designed to boot with bootstrap procedure of target processor 
 
-* GTK based linux desktop
-* [+] many keyboard shortcuts
-* [-] limited native function, heaviest resource computer desktop
+* Windows Driver Model (wdm)
+  * framework for device drivers that was introduced with Windows 98 and Windows 2000 to replace VxD which was used on older versions of Windows such as Windows 95 and Windows 3.1
 
-> GPL (GNU General Public License)
+* X Window System
+  * xAuthority file is in ~, stores credentials in cookies used by xauth for authentication of X sessions
 
-* software licence
+> Program
 
-> Posix (Portable Operating System Interface)
+![input / process /output diagram](images/20210219_213251.png)
 
-* standards specified by IEEE Computer Society for maintaining compatibility between operating systems
+* Input
+  * Keyboard, Scanner
+* Output
+  * Screen, Headset
+* Input + output
+  * Touch screen, Digital camera
 
-> rpath
+> GNU
 
-* designates the run-time search path hard-coded in an executable file or library
+* GNU (Gnu is Not Unix)
+  * OS project by Free Software Foundation
+  * First free desktop environment
 
-> standalone (freestanding program)
+* GNOME (GNU Network Object Model Environment)
+  * GTK based linux desktop
+  * [+] many keyboard shortcuts
+  * [-] limited native function, heaviest resource computer desktop
 
-* no external module, library, program designed to boot with bootstrap procedure of target processor 
-
-> Windows Driver Model (wdm)
-
-* framework for device drivers that was introduced with Windows 98 and Windows 2000 to replace VxD which was used on older versions of Windows such as Windows 95 and Windows 3.1
-
-> X Window System
-
-* xAuthority file is in ~, stores credentials in cookies used by xauth for authentication of X sessions
+* GPL (GNU General Public License)
+  * software licence
 
 ## Pattern
 
@@ -198,7 +203,7 @@
 
 * Access data from I/O and memory without CPU
 
-```
+```sh
 Cycle stealing Mode   # CPU prioritize DMA, 1cycle break, fast IO
 Burst Mode            # Block level data 
 ```
@@ -214,26 +219,32 @@ Burst Mode            # Block level data
 * Most applications are not self-contained and make calls (system calls) to Linux kernel and library
 * Kernel time is the time spent in Linux kernel, and user time is time spent in application or library code
 
-
 > Yocto project
 
-* OpenEmbedded Core (oe-core) contains base layer of recipes, classes and files 
+* OpenEmbedded Core (oe-core) contains base layer of recipes, classes and files
 
 ## Software Engineering
 
-```
+```sh
 wiki?curid=10015            # wiki based
 https://stackshare.io/      # compare different stacks
 ```
-
 
 ### KPI
 
 > KPI (Key Performance Indicator)
 
+* Operational
+  * problem understanding : clarify any uncertainties arount the problem SLA (Service-Level Agreement)
+* Tactical
+  * SME (subject matter expert)
+  * accurate and repeatable analysis
+  * concise documentation / automatic alerting & monitoring for unseen changes
+* Strategical
+  * Prioritize and identify important problem that are not actively being worked on product, process, policy
 * evaluate the success of an organization or of a particular activity in which it engages
 
-> CPS (Cost Per Sales) 
+> CPS (Cost Per Sales)
 
 * the amount of money paid for every sale generated
 
@@ -292,8 +303,8 @@ Maintenance Release # release of a product that does not add new features or con
 
 > Process of Reference
 
-
 > Meeting
+
 * Learn progress, status -> Update big board
 * Surface problems that are slowing things down. 
 

@@ -524,11 +524,8 @@ Movie.findAll({
 * Logging
 
 ```js
-// view the table creation queries
-sequelize.sync({ logging: console.log })
-
-// View query
-User.find(1, { logging: console.log })
+sequelize.sync({ logging: console.log }) // view the table creation queries
+User.find(1, { logging: console.log })   // View query
 ```
 
 ### DDL
@@ -974,33 +971,32 @@ Project.findAll({
 })
 ```
 
-> RIGHT OUTER JOIN
+* RIGHT OUTER JOIN
+  * right: true
 
-* right: true
-
-> INNER JOIN
-
-* required: true
-
-> LEFT JOIN
-
-* required: false
-
-> Inner Join
-
-```sql
-SELECT `user`.`id`,
-       `user`.`name`,
-       `Instruments`.`id` AS `Inst.id`,
-       `Instruments`.`name` AS `Inst.name`,
-       `Instruments`.`size` AS `Instr.size`,
-       `Instruments`.`userId` AS `Inst.userId`
-FROM `users` AS `user`
-INNER JOIN `tools` AS `Inst` ON
-    `user`.`id` = `Inst`.`userId` AND `Inst`.`size` != 'small';
-```
+* LEFT OUTER JOIN
+  * required: false
 
 ```js
+// SELECT [...] FROM `users` AS `user`
+//    LEFT OUTER JOIN `tools` AS `Instruments` ON `user`.`id` = `Instruments`.`userId` AND `Instruments`.`size` != 'small';
+await User.findAll({
+  include: {
+    model: Tool,
+    as: 'Instruments',
+    where: { size: { [Op.ne]: 'small' } },
+    required: false
+  }
+});
+```
+
+* INNER JOIN
+  * required: true (default)
+
+```js
+// SELECT `user`.`id`, `user`.`name`, `Instruments`.`id` AS `Inst.id`, `Instruments`.`name` AS `Inst.name`, `Instruments`.`size` AS `Instr.size`, `Instruments`.`userId` AS `Inst.userId` FROM `users` AS `user`
+//    INNER JOIN `tools` AS `Inst` ON `user`.`id` = `Inst`.`userId` AND `Inst`.`size` != 'small';
+
 User.findAll({
   include: {
     model: Tool,

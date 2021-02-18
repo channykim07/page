@@ -22,6 +22,12 @@ class PATH:
   CRED = SRC / 'cred'
   TEST = SRC / 'test'
   ENV = SRC / '..' / '.env'
+  PROBLEM = SRC / '..' / 'private' / 'practice'
+  GITHUB = "https://github.com/SeanHwangG/private/tree/main/practice/"
+
+
+categories = ["operation", "tree", "design", "Iterable", "conditional", "sort", "recursion", "linkedlist", "bruteforce", "graph", "hashable", "dynamic_programming", "math", "ordering",
+              "sparse_table", "cut", "greedy", "queue", "binary", "string", "geometry", "syntax"]
 
 
 def get_logger(name, level):  # WARNING 30, INFO 20, DEBUG 10

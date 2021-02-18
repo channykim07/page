@@ -397,19 +397,24 @@ Line #      Hits         Time  Per Hit   % Time  Line Contents
 
 ### Path
 
-> <pathlib>
+> pathlib
+
+![Class Diagram](images/20210219_123346.png)
 
 ```py
 # Path
 parents 
-stem / suffix           # w/o suffix / only suffix
-as_posix() / as_uri()   # win → linux / uri
 chmod(0o444)
+name                    # 'my/setup.py.zip' -> 'setup'
+stem                    # setup 
+suffix / suffixes       # .py / ['.py', '.zip']
+as_posix() / as_uri()   # win → linux / uri
 glob('*.py')            # get all matched files
-is_absolute() / is_relative_to(*other)  
 match('*.py')           # patterns
 stat()                  # information about this path (st_size, st_mtime)
 resolve(strict=False)   # make absolute
+is_dir / is_file ()     # check if directory or file
+is_absolute() / is_relative_to(*other)  
 mkdir(mode=0o777, parents=F, exist_ok=F)
 read_bytes() / read_text()
 write_text(data, encoding=None, errors=None)
@@ -418,7 +423,7 @@ write_text(data, encoding=None, errors=None)
 MODEL_ROOT = Path(__file__).resolve().parents[2] / 'models'
 ```
 
-> <os>
+> os
 
 * python3 -c 'import sys; print(64 if sys.maxsize > 2 ** 32 else 32)')
 
@@ -433,12 +438,13 @@ getpid()      # current process id
 getlogin()            # name of the user logged in on the controlling terminal of the process
 listdir(path='.')     # List containing the names of the entries in the directory given by path
 rename('old,'new)     # rename
+system(command)       # Execute the command (a string) in a subshell
+times()               # current global process times
 
 rmdir(path, *, dir_fd=None)              # Remove directory path
 mkdir(path, mode=0o777, exists_ok=True)  # Create a directory named path
 
-system(command)         # Execute the command (a string) in a subshell
-times()                 # current global process times
+os.path.exists('/usr/local/bin/')        # check if path exists
 ```
 
 ```py
@@ -1748,7 +1754,7 @@ app.config['SECRET_KEY'] = '<replace with a secret key>'
 toolbar = DebugToolbarExtension(app)
 ```
 
-> <django>
+> django
 
 ![alt](images/20210213_015930.png)
 
@@ -1757,10 +1763,9 @@ toolbar = DebugToolbarExtension(app)
 * project can contain multiple apps
 * automatically reloads Python code for each request as needed
 
+> bs4
 
-> <bs4>
-
-```
+```sh
 (from bs4 import BeautifulSoup)
 
 name                          # tagname
@@ -1788,10 +1793,86 @@ new_button.attrs["onclick"] = "toggle()"
 new_button.append('This is a new button!')
 ```
 
+* Multifile gist toggle
 
-> <requests>
+```py
+import requests
+import re
+from ..common import PATH, logger, git_credential
+from bs4 import BeautifulSoup
+from itertools import islice
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
+class Gist:
+  def __init__(self, gist_id="", h1="", h2='', h3='', li='', link='', file_names=None, html='', problem_id=''):
+    self.gist_id = gist_id
+    self.h1 = h1
+    self.h2 = h2
+    self.h3 = h3
+    self.li = li
+    self.link = link
+    self.file_names = file_names or []
+    self.html = html
+    self.problem_id = problem_id
+
+  def __repr__(self):
+    return f"{self.__dict__}"
+
+  @classmethod
+  def get_gist(cls, gist_id, h1="", h2="", h3="", li=""):
+    gist = cls(gist_id, h1, h2, h3, li, f"<a href=https://gist.github.com/SeanHwangG/{gist_id}>{gist_id}</a>")
+    result = requests.get(f'https://gist.github.com/{gist_id}.js', headers=git_credential)
+
+    if result.text.startswith("<!DOCTYPE html>"):
+      return None
+    # update with regex
+    result = result.text.replace("\\\\n", "[NEW_LINE]").replace("\\n", "\n").replace("[NEW_LINE]", "\\n")
+    result = re.sub(r"\\(/|&|\$|<|`|\"|\\|')", r"\1", result)
+    result = result.split("document.write('")[-1][:-3]
+
+    bs = BeautifulSoup(result, "html.parser")
+
+    for tag in bs.find_all(class_="gist"):
+      file_box = tag.find(class_="file-box")
+      root = tag.find(class_="file-box")
+      toggle_div = bs.new_tag('div', attrs={"class": "gist-meta"})
+
+      for i, d in enumerate(tag.find_all(class_="file")):
+        d["class"] = f"file gist-id-{gist_id}"
+        if i != 0:
+          file_box.append(d)  # combine to first table
+
+      for d in tag.find_all(class_="gist-meta"):
+        siblings = list(d.next_elements)
+        file_id, file_name = siblings[4].attrs["href"].split("#")[-1], siblings[5]
+        toggle_a = bs.new_tag('a', attrs={"id": file_id, "class": f"gist-toggler gist-id-{gist_id}", "onclick": f"toggle('gist-id-{gist_id}', '{file_id}')", "style": "padding: 0 18px"})
+        toggle_a.append(file_name)
+        toggle_div.append(toggle_a)
+        d.extract()  # remove bottom nav
+      edit_gist = bs.new_tag('a', attrs={"class": f"edit-gist", "href": f"https://gist.github.com/{gist_id}", "style": "float: right"})
+      edit_gist.append("edit")
+      toggle_div.append(edit_gist)
+
+      root.insert(0, toggle_div)
+      for d in islice(tag.find_all(class_="gist-file"), 1, None):
+        d.extract()  # remove except first
+    gist.html = str(bs)
+
+    return gist
+
+  @staticmethod
+  def get_all_gist(gist_ids, h1="", h2="", h3="", li=""):
+    logger.debug(f"get_all_gist({h1}, {h2}, {h3}, {li})")
+    futures = []
+    with ThreadPoolExecutor() as ex:
+      futures.extend([ex.submit(Gist.get_gist, gist_id, h1, h2, h3, li) for gist_id in gist_ids])
+    gists = [future.result() for future in as_completed(futures)]
+    return [gist for gist in gists if gist != None]
 ```
+
+> requests
+
+```py
 json()            # convert back to
 ```
 
@@ -1803,9 +1884,7 @@ import subprocess as sp
 import requests
 import os
 from itertools import islice
-from firebase_admin import credentials, firestore, initialize_app
 from math import ceil
-from ..common import get_db_instance
 
 def clone_all(username='seanhwangg', clone_path):
   current_count, total_count = 0, 1000
@@ -1836,7 +1915,7 @@ def clone_all(username='seanhwangg', clone_path):
     return file2content
 ```
 
-> <selenium>
+> selenium
 
 * Multithreading
 

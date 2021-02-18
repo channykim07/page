@@ -1,5 +1,8 @@
 # Syntax
 
+* computer language is the set of rules
+* defines the combinations of symbols that are considered to be correctly structured statements or expressions in that language
+
 ## IO
 
 * [Variable 1](https://docs.google.com/forms/d/1WqtkeaNlVPNL4Q56uLiseUAVoRHRQxFwjje5VOb4tjA/edit)
@@ -9,16 +12,16 @@
 > Run
 
 ```py
+python a.py
 -c <command>      # Execute python code in command (; for line delimiter)
 -m <module-name>  # Search sys.path for named module / execute as the __main__ module
 -u          # Force stdin, stdout and stderr to be totally unbuffered.
 -O / -OO    # removes assert statements / assert statements + __doc__ strings.
-
 ```
 
 > Comment
 
-```py
+```text
 #      # single line comment
 """    # multi line comment
 written by
@@ -55,7 +58,10 @@ isinstance(entry, dict)            # check for type
 * Lists of keywords in python
 
 ```py
-False | await | else | import | None | except | in | raise | True | class | finally | return | and | continue | for | lambda | try | as | def | from | while | assert | del | not | with | async | elif | if | or
+False | True
+await 
+else | import | None | except | in | raise | class | finally | return | and | continue | for | lambda | try 
+as | def | from | while | assert | del | not | with | async | elif | if | or
 ```
 
 * yield
@@ -232,18 +238,16 @@ for attr in dir("AB"):    # show methods
 help("AB")        # run interactive help system
 ```
 
-* suppress print
+* print
 
 ```py
+# suppress print
 import sys
 sys.stdout = open(os.devnull, 'w')
 print('Hello')        # will be ignored
 sys.stdout = sys.__stdout__
-```
 
-* color print
-
-```py
+# color print
 class bcolors:
   HEADER = '\033[95m'
   OKBLUE = '\033[94m'
@@ -256,13 +260,10 @@ class bcolors:
   UNDERLINE = '\033[4m'
 
 print(f"{bcolors.WARNING}Warning: No active frommets remain. Continue?{bcolors.ENDC}")
-```
 
-* Escape (₩ is used instead of backslash in korean keyboards)
-
-```py
-"  ' \    # Double Quote / single quote / backslash
-\n \r \t    # New Line / Carriage Return / Tab  
+# Escape (₩ is used instead of backslash in korean keyboards)
+print("\" \' \\")    # Double Quote / single quote / backslash
+print("\n \r \t")    # New Line / Carriage Return / Tab  
 ```
 
 * format (introduced after 3.6)  
@@ -570,7 +571,7 @@ string            # The string passed to match() or search()
 
 * Escape
 
-```py
+```sh
 \.    # dot
 \-    # dash
 \( | \) # braces
@@ -635,10 +636,10 @@ re.search('\w+', ex)    # end : 4, group : made, groupdict : {}, groups : (), sp
 
 * Type
 
-```py
+```sh
 \w      # Unicode letter, ideogram, digit, underscore  ; Capital <>
-\d | \D    # digit | Non-digit
-\s | \S    # space, tab, newline | non-space, tab, newline
+\d | \D # digit | Non-digit
+\s | \S # space, tab, newline | non-space, tab, newline
 \t      # tab
 ```
 
@@ -665,7 +666,7 @@ range(0, 5)     # [0, 1, 2, 3, 4, 5]
 [1,2,3].insert(0, 4)  # [4, 1, 2, 3]
 ```
 
-> <collections.deque>
+> collections.deque
 
 * [deque](https://docs.google.com/forms/d/12yDxm3jPOLbyR8Fc9dJ-6yOGz9arfs-iVIiA1s_mTlM/edit)
 
@@ -693,6 +694,96 @@ rotate(n=1)   # Rotate the deque n steps to the right
 def tail(filename, n=10):  # Linux tail equivalent
   with open(filename) as f:
     return deque(f, n)
+```
+
+* Linked List
+
+```py
+class Node(object):
+  def __init__(self, val):
+    self.val = val
+    self.next = None
+
+class MyLinkedList(object):
+  def __init__(self):
+    self.head = None
+    self.size = 0
+
+  def __str__(self):
+    ret = ""
+    cur = self.head
+    while cur:
+      ret += (str(cur.val) + " -> ")
+      cur = cur.next
+    return rets
+
+  def get(self, idx):
+    if idx < 0 or idx >= self.size or not self.head:
+      return None
+    cur = self.head
+    for i in range(idx):
+      cur = cur.next
+    return cur
+
+  def addAtIndex(self, idx, val):
+    if idx < 0 or idx > self.size:
+      return
+    node = Node(val)
+    if idx == 0:
+      node.next = self.head
+      self.head = node
+    else:
+      pre = self.get(idx - 1)
+      node.next = pre.next
+      pre.next = node
+    self.size += 1
+
+  def deleteAtIndex(self, idx):
+    if idx < 0 or idx >= self.size:
+      return
+    if idx == 0:
+      self.head = self.head.next
+    else:
+      pre = self.get(idx - 1)
+      pre.next = pre.next.next
+    self.size -= 1
+```
+
+* Doubly Linked List
+
+```py
+class LRUCache:
+    def __init__(self, MSize):
+        self.size = MSize
+        self.cache = {}
+        self.next, self.before = {}, {}
+        self.head, self.tail = '#', '$'
+        self.connect(self.head, self.tail)
+
+    def connect(self, a, b):
+        self.next[a], self.before[b] = b, a
+
+    def delete(self, key):
+        self.connect(self.before[key], self.next[key])
+        del self.before[key], self.next[key], self.cache[key]
+
+    def append(self, k, v):
+        self.cache[k] = v
+        self.connect(self.before[self.tail], k)
+        self.connect(k, self.tail)
+        if len(self.cache) > self.size:
+            self.delete(self.next[self.head])
+
+    def get(self, key):
+        if key not in self.cache: return -1
+        val = self.cache[key]
+        self.delete(key)
+        self.append(key, val)
+        return val
+
+    def put(self, key, value):
+        if key in self.cache: self.delete(key)
+        self.append(key, value)
 ```
 
 ### Sort
@@ -1139,7 +1230,7 @@ class Developer(Employee):
     self.prog_lang = prog_lang
 ```
 
-> <Dataclass>
+> Dataclass
 
 * Work in python 3.7 or above
 * implement a .__repr__() and an .__eq__() method that can do basic object comparisons
@@ -1147,10 +1238,10 @@ class Developer(Employee):
 ```py
 init    # Add .__init__() method? (Default is True.)
 repr    # Add .__repr__() method? (Default is True.)
-eq    # Add .__eq__() method? (Default is True.)
+eq      # Add .__eq__() method? (Default is True.)
 order   # Add ordering methods? (Default is False.)
 unsafe_hash # Force the addition of a .__hash__() method? (Default is False.)
-frozen    # If True, assigning to fields raise an exception. (Default is False.)
+frozen      # If True, assigning to fields raise an exception. (Default is False.)
 ```
 
 * Card
@@ -1439,6 +1530,52 @@ proxy_image1.display_image()
 proxy_image2.display_image()  # loading necessary
 proxy_image2.display_image()
 proxy_image1.display_image()
+```
+
+> Observer
+
+```py
+import logging
+class Observable:
+  def __init__(self):
+    self._observers = []
+  
+  def register_observer(self, observer):
+    logging.info(f"Attaching observable {observable}")
+    self._observers.append(observer)
+    if observable.hasmethod("update"):
+      logging.info(f"Successfully attached [Total Observer: {len(_observers)}]")
+      return True
+    else:
+      logging.warn("Observable must implement 'update' method")
+      return False
+
+  def detach_observer(self):
+    logging.info(f"Dettaching observer {observer}")
+    if observable in self._observers:
+      logging.info(f"Successfully detached [Total Observer: {len(_observers)}]")
+      return True
+    else:
+      logging.warn("Observable have not yet been added")
+      return False
+  
+  def notify_observers(self, *args, **kwargs):
+    for observer in self._observers:
+      observer.notify(self, *args, **kwargs)
+
+# Test
+class TestNotObservable:
+  pass
+class TestObservable:
+  def update(self):
+    pass
+
+notObservable = TestNotObservable()
+observable = TestObservable()
+
+self.assertFalse(BankModel.attach(nonObservable))
+self.assertTrue(BankModel.attach(observable))
+self.assertFalse(BankModel.attach(observable))
 ```
 
 ### Functional

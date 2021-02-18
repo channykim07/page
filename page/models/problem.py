@@ -12,12 +12,14 @@ from selenium.webdriver.support.ui import Select
 
 
 class Problem():
-  def __init__(self, problem_id="", title="", level="", link="", gist_id=""):
+
+  def __init__(self, problem_id="", title="", level="", link="", category_id="", solution_link=""):
     self.problem_id = problem_id
     self.title = title
     self.level = level
     self.link = link
-    self.gist_id = gist_id
+    self.category_id = category_id
+    self.solution_link = solution_link
 
   def __repr__(self):
     return f"{self.problem_id}"

@@ -5,15 +5,13 @@ import functools
 from firebase_admin import credentials, firestore, initialize_app
 from .models.member import Member
 from .models.team import Team
-from .models.gist import Gist
 from .models.problem import Problem
 from .models.doc import Doc
-from .models.mock import Mock
 from .common import PATH, logger, service_account_credential, html2text
 
 
 def dict2class(collection_id, dict):
-  COLLECTION_ID2CLS = {"member": Member, "team": Team, "mock": Mock, "gist": Gist, "problem": Problem, "doc": Doc, "mock": Mock}
+  COLLECTION_ID2CLS = {"member": Member, "team": Team, "problem": Problem, "doc": Doc}
   return COLLECTION_ID2CLS[collection_id](**dict)
 
 

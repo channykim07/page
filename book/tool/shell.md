@@ -271,6 +271,7 @@ git ls-tree --name-only -r HEAD    # List all files on the branch
 ![alt](images/20210215_235720.png)
 
 ```sh
+-U<n>                        # allows you to customize the number of lines to show around a change
 --name-only --diff-filter=U  # show all unmerged files
 ```
 

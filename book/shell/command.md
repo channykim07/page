@@ -203,6 +203,9 @@ $(dirname a/b/file.cpp) # cd into file's located folder
 -path '*/nested/folder/*'   # Find nested folder
 -type d?                    # Find Directory
 -exec ls -l {} \;           # pipe with ls -l
+. -type d -empty -delete    # remove all empty directory
+
+. -type f -execdir mv "{}" .. \;            # Move to its parrent folder
 -printf '%TY-%Tm-%Td %TT %p\n' | sort -r
 ```
 
@@ -229,13 +232,14 @@ $(dirname a/b/file.cpp) # cd into file's located folder
 -t DESTINATION file1 file2 file3    # multiple files 
 `ls -1 | grep -v no_move.jpg folder      # move everything except one
 ~/Linux/Old/!(Tux.png) ~/Linux/New/
-```
+#```
 
 > rm
 
 ```sh
--r <dir>                # Remove directories and their contents recursively
-rm !(a.txt|b.txt)       # Remove all except a.txt and b.txt
+-r <dir>       # Remove directories and their contents recursively
+!(a.txt|b.txt) # Remove all except a.txt and b.txt
+**/.git        # Remove all nested .git file
 ```
 
 > touch
@@ -247,6 +251,9 @@ rm !(a.txt|b.txt)       # Remove all except a.txt and b.txt
 * Check whether two files are equal
 
 ```sh
+<(echo a) <(echo b) # Print diff of two output command
+-y                  # Display side by side
+
 ssh user@remote_host "cat foo" | diff - foo         # diff over remote
 <(ssh server1 'cat foo') <(ssh server2 'cat foo')   # diff two remote file
 ```
@@ -263,16 +270,21 @@ ssh user@remote_host "cat foo" | diff - foo         # diff over remote
 -p dir1/dir2    # nested directory
 ```
 
+> rename
+
+```sh
+rename "s/py/md/" *.pyj # rename all py to js
+```
+
 ### Link
 
 > ln
 
 ```sh
--n LINK          # treat LINK as a normal file if it is a link to dir
--f             # remove existing destination files
+-n LINK  # treat LINK as a normal file if it is a link to dir
+-f       # remove existing destination files
+-lnf     # overwrite existing symbolic link
 -s /any/file linked    # Create Symbolic link
-
--lnf          # overwrite existing symbolic link
 ```
 
 > unlink
@@ -283,13 +295,18 @@ unlink linked-file
 
 > mount
 
-attach filesystem found on device (type) at the directory dir
+* attach filesystem found on device (type) at the directory dir
+
+```sh
 cat /proc/mounts        # show all mounted files
 sudo mount system.img temp_system
+```
 
 > umount
 
+```sh
 sudo umount temp_system
+```
 
 ### Read
 
@@ -333,13 +350,6 @@ find . -name '*' | xargs wc -l  # Count all number of lines
 
 * faster because it does not load the entire file at once
 * allows navigation though file using page up/down keys
-
-> diff
-
-```sh
-<(echo a) <(echo b) # Print diff of two output command
--y                  # Display side by side
-```
 
 > Open (mac)
 
@@ -432,6 +442,8 @@ key * \c
 > sed
 
 * stream editor for filtering and transforming text
+* invalid command code .
+  * for OS use empty argument -i ''
 
 ```sh
 [script] [input-file]
@@ -441,6 +453,8 @@ s/              # Replace
 -n              # suppress line echoed to stdout after commands 
 -i              # In place
 "s/hello/hi/" file.txt   # Replace hello to hi in file.txt
+-n '/^#include/p;q' file # (p)rints all cpp files, then (q)uits
+-i '1s/^/task goes here\n/' todo.txt    # append to beginning of file
 ```
 
 > shuf

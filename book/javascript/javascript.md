@@ -3,6 +3,7 @@
 * interpreted, dynamic typing, prototype-based programming language 
 
 ## Speed Optimization
+
 * https://developers.google.com/speed/pagespeed/insights/
 * https://tinyjpg.com
 * https://jakearchibald.github.io/svgomg/
@@ -12,13 +13,13 @@
 > Versions
 
 * ES5
-    * ECMAScript5 developed in 2009
-    * Fully supported in all modern browsers
+  * ECMAScript5 developed in 2009
+  * Fully supported in all modern browsers
 
 * ES6
-    * ECMAScript 2015
-    * Internet Explorer does not support ECMAScript 2015
-    * let and const, default parameter values, Array.find(), Array.findIndex().
+  * ECMAScript 2015
+  * Internet Explorer does not support ECMAScript 2015
+  * let and const, default parameter values, Array.find(), Array.findIndex().
 
 > Packages
 
@@ -206,15 +207,92 @@ npm root -g
 
 ## HTML
 
+* Hyper Text Markup Language where W3 Consortium is main international standards organization
+* request and response protocol.
+* media independent protocol.
+* stateless protocol.
 
-## CSS
+> Term
+
+* global atrribute
+
+```sh
+accesskey       # a shortcut key to activate/focus an element
+class           # one or more classnames for an element (refers to a class in a style sheet)
+contenteditable # Specifies whether the content of an element is editable or not
+data-*          # Used to store custom data private to the page or application
+dir             # text direction for the content in an element
+draggable       # whether an element is draggable or not
+hidden          # Specifies that an element is not yet, or is no longer, relevant
+id              # Specifies a unique id for an element
+lang            # Specifies the language of the element's content
+spellcheck      # whether element is to have its spelling and grammar checked or not
+style           # an inline CSS style for an element
+tabindex        # tabbing order of an element
+title           # extra information about an element
+translate       # whether the content of an element should be translated or not
+```
+
+![alt](images/20210210_182233.png)
+
+```html
+&nbsp;     # to add a single space.
+&ensp;     # to add 2 spaces.
+&emsp;     # to add 4 spaces.
+
+<!-- -->   # commnet
+```
+
+### CSS
 
 * describes how HTML elements should be displayed.
-
-> Terms
-
 * id
   * id must start with letters only have one id
+* Pseudo-Elements
+  * style specified parts of an element. (ex, Style first letter, or line, of an element)
+
+```js
+<link rel="stylesheet" type="text/css" href="theme.css">
+```
+
+* Rules given in later classes (or which are more specific) override
+
+```js
+a.abc, a.xyz {     /* apply to multiple css */
+  width: 100px;
+  height: 100px;
+} 
+```
+
+* display
+
+![display](images/20210219_220013.png)
+
+```sh
+inline             # as an inline element <span>. height, width properties have no effect    
+block              # as a block element <p>. starts on a new line, takes up whole width    
+contents           # remove container, make childs children of element next level up in DOM
+flex / grid        # element as a block-level flex / grid container    
+inline-flex / grid # Displays an element as an inline-level flex / grid container    
+inline-table       # The element is displayed as an inline-level table    
+list-item          # Let the element behave like a <li> element    
+none               # completely removed
+```
+
+* Flex
+
+![flex](images/20210219_220045.png)
+
+> parent
+
+```css
+display: flex;        
+justify-content: center;
+
+
+flex-direction         #  how flex items are placed in flex container defining main axis and direction
+flex-direction: row;
+```
 
 * Selector
 
@@ -286,37 +364,344 @@ child.offsetWidth > 0 && child.offsetHeight > 0 // also check if parent is hidde
 object.style['display'] != 'none'               // only checks the element
 ```
 
-## HTML
+### Input
 
-* Hyper Text Markup Language where W3 Consortium is main international standards organization
-* request and response protocol.
-* media independent protocol.
-* stateless protocol.
- 
-> Term
+* input
+* label
+  * a label for an input tag
 
-* global atrribute
-
-```sh
-accesskey       # a shortcut key to activate/focus an element
-class           # one or more classnames for an element (refers to a class in a style sheet)
-contenteditable # Specifies whether the content of an element is editable or not
-data-*          # Used to store custom data private to the page or application
-dir             # text direction for the content in an element
-draggable       # whether an element is draggable or not
-hidden          # Specifies that an element is not yet, or is no longer, relevant
-id              # Specifies a unique id for an element
-lang            # Specifies the language of the element's content
-spellcheck      # whether element is to have its spelling and grammar checked or not
-style           # an inline CSS style for an element
-tabindex        # tabbing order of an element
-title           # extra information about an element
-translate       # whether the content of an element should be translated or not
+```js
+<input([type=])>        // an input control (text, password, number)
+onfocus / onfocusout    // add handler function when user click / unclick form 
 ```
 
- ![alt](images/20210210_182233.png)
+```js
+//radio
+// one by default set checked to select by default
+<style>
+  [type="radio"]:checked+label { font-weight: bold; }
+  [type="radio"]#male:checked~p { color: blue; }
+  [type="radio"]#female:checked~p { color: red; }
+  [type="radio"]#young:checked~p { font-size: 20px; }
+  [type="radio"]#old:checked~p { font-size: 30px; }
+</style>
+<input type="radio" id="male" name="gender" checked> <label for="male">male</label>
+<input type="radio" id="female" name="gender"> <label for="female">female</label>
+<br>
+<input type="radio" id="young" name="age"> <label for="young">young</label>
+<input type="radio" id="old" name="age" checked> <label for="old">old</label>
+<p>Hi</p>
+```
 
-## Event
+* form
+  * an HTML form for user input
+
+```js
+outline: none;     // hide blue outline for text input
+```
+
+* textarea
+  * a multiline input control (text area)
+* button
+* optgroup
+  * a group of related options in a drop-down list
+* fieldset
+  * related elements in a form
+* legend
+  * a caption for a fieldset element
+* output
+  * the result of a calculation
+* datalist
+  * a list of pre-defined options for input controls
+
+* select
+  * a drop-down list
+* option
+  * an option in a drop-down list
+
+```js
+<label for="cars">Choose a car:</label>
+<select name="cars" id="cars">
+  <option value="volvo">Volvo</option>
+  <option value="saab">Saab</option>
+  <option value="mercedes">Mercedes</option>
+  <option value="audi">Audi</option>
+</select>
+
+<input type="number" min="0" max="64" list="numbersxx" id="numberx">        # number color text
+<input type="checkbox" id="agree" />
+<label for="agree">I agree with the Terms and Conditions</label>
+<label>My input <input type="text" id="my-input" /> </label>
+```
+
+> media
+
+* alt
+  * Specifies an alternate text for an image
+* src
+  * Source file path
+
+* area
+
+```js
+<area shape="rect" coords="0,0,82,126" alt="Sun" href="sun.htm">
+<area shape="circle" coords="90,58,3" alt="Mercury" href="mercur.htm">
+```
+
+* map
+
+```js
+<img src="planets.gif" width="145" height="126" alt="Planets" usemap="#planetmap">
+<map name="planetmap">
+<area shape="rect" coords="0,0,82,126" alt="Sun" href="sun.htm">
+</map>
+```
+
+### Structure
+
+> CSS
+
+![static vs relative](images/20210219_215909.png)
+
+![html structure](images/20210218_233924.png)
+
+* Structure css
+
+```js
+vh              // scaled accordingly when the initial containing block is changed.
+```
+
+* Structure Tags
+
+```js
+<html></html>       // { display: block; } 
+// :focus           // {outline: none; }
+<style></style>     // put css  { display: none; }
+<div></div>         // defines a division or a section in an HTML document
+<span></span>       // wrap small portions of text, images
+<article></article> // make sense on its own, possible to read it independently from the rest of the web site
+
+<div></div>         // Content Division element, the generic container for flow content. 
+// { display: block; }
+
+<span></span>       // a section in a document
+<header></header>   // a header for a document or section
+<footer></footer>   // { display: block; }
+<main></main>       // the main content of a document
+<body></body>       // display: block; margin: 8px; }
+<data></data>       // Links the given content with a machine-readable translation
+<details></details> // additional details that the user can view or hide
+<dialog></dialog>   // a dialog box or window
+<summary></summary> // a visible heading for a <details> element
+```
+
+* Split screens
+
+```js
+<style>
+  html, body { height: 100%; margin: 0; }
+  .screen { height: 100%; background-color: black; display: flex; }
+  .left { background-color: red; width: 300px; }
+  .right { background-color: blue; width: 100%; }
+  .right-top { background-color: green; height: 200px; }
+  .right-bottom { background-color: yellow; margin-top: 50px; height: 100%; }
+</style>
+<div class="screen">
+  <div class="left"></div>
+  <div class="right">
+    <div class="right-top"></div>
+    <div class="right-bottom"></div>
+  </div>
+</div>
+```
+
+> Position
+
+![position](images/20210219_221142.png)
+
+* relative vs fixed
+  * px for constant spacing rem for text size
+
+```js
+Relative  // positioned relative to its normal position. 
+Absolute  // positioned absolutely to its first positioned parent. 
+Fixed     // positioned related to the browser window. 
+Sticky    // positioned based on the user's scroll position.
+
+min-width // content is smaller than the minimum width, the minimum width will be applied
+```
+
+* margin
+
+```js
+default 0
+margin: one / two / three / four  // tdlr / td, rl / t, rl, d / t, r, b, l
+```
+
+### Text
+
+* css
+
+![align](images/20210219_220216.png)
+![word wrap](images/20210219_220237.png)
+
+```js
+text-transform  // controls the capitalization of text
+text-align
+left / right    // Aligns the text to the left / right
+center          // Centers the text
+justify         // Stretches lines so that each line has equal width (ex. newspapers, magazines)    
+
+overflow-wrap   // normal | anywhere | break-all | break-word | keep-all
+text-decoration // none | line-through | overline | underline | initial | inherit
+```
+
+```js
+<style>
+#parent { text-align:center; background-color:blue; height:400px; width:600px; }
+.block { height:100px; width:200px; text-align:left; }
+.center { margin:auto; background-color:green; }
+.left { margin:auto auto auto 0; background-color:red; }
+.right { margin:auto 0 auto auto; background-color:yellow; }
+</style>
+<div id="parent">
+    <div id="child1" class="block center"> a block to align center and with text aligned left </div>
+    <div id="child2" class="block left"> a block to align left and with text aligned left </div>
+    <div id="child3" class="block right"> a block to align right and with text aligned left </div>
+</div>
+```
+
+* tags
+
+```js
+<h1></h1>     // {display: block; font-size: 2em; margin: 0.67em 0; font-weight: bold;}
+<h2></h2>     // {display: block; font-size: 1.5em; margin: 0.83em 0; font-weight: bold;}
+<h3></h3>     // {display: block; font-size: 1.17em; margin: 1em 0; font-weight: bold;}
+<h4></h4>     // {display: block; margin-top: 1.33em 0; font-weight: bold;}
+<h5></h5>     // {display: block; font-size: .83em; margin: 1.67em 0; font-weight: bold;}
+<h6></h6>     // {display: block; font-size: .67em; margin: 2.33em 0; font-weight: bold;}
+<hr></hr>     // {display: block; margin: 0.5em auto; border-style: inset; border-width: 1px; }
+<p></p>       // {display: block; margin-top: 1em 0}
+<pre></pre>   // preformatted text
+
+<abbr></abbr>          // an abbreviation or an acronym
+<address></address>    // contact information address, { display: block; font-style: italic; }
+<b></b>                // bold text, {font-weight: bold;}
+<br></br>              // A line break in text (carriage-return).
+<del></del>            // text that has been deleted from a document
+<em></em>              // emphasized text 
+<mark></mark>          // marked/highlighted text
+<q></q>                // a short quotation
+<strong></strong>      // important text
+<sub></sub>            // subscripted text
+<sup></sup>            // superscripted text
+<template></template>  // a template
+<time></time>          // a date/time
+<u></u>                // text that should be stylistically different from normal text
+<var></var>            // a variable
+```
+
+* overflow
+  * specifies what should happen if content overflows an element's box
+
+![overflow](images/20210219_221044.png)
+
+```js
+overflow: visible|hidden|scroll|auto|initial|inherit;
+visible (default) //  is not clipped. It renders outside the element's box
+hidden            // clipped, rest of content will be invisible    
+scroll            // clipped, scroll will always show scrollbar even if content fits
+auto              // clipped, a scroll-bar is added when content doesn’t fit
+initial / inherit // default / inherit from parent
+```
+
+> Link
+
+```js
+a:link         // a normal, unvisited link
+a:visited      // a link the user has visited
+a:hover        // a link when the user mouses over it
+a:active       // a link the moment it is clicked
+
+color           // red / #00ff00
+letter-spacing  // 3px
+line-height     // 0.8
+padding         // 10px 20px
+text-align      // center
+text-decoration // line-through / overline / underline
+text-transform  // uppercase / undercase / capitalize
+text-indent     // 50px
+```
+
+```js
+<a>            // onclick
+a:link         // { color: (internal value); text-decoration: underline; cursor: auto; }
+
+<download>     // Specifies that the target will be downloaded when a user clicks on the hyperlink
+<href>         // Specifies the URL of the page the link goes to
+<target>       // Specifies where to open the linked document
+
+<script>       // 
+async / defer      // script is executed asynchronously /page has finished parsing (only external)
+crossorigin        // Sets request mode to an HTTP CORS Request (anonymous / use-credentials)
+integrity filehash // browser checks script to ensure that code is not manipulated
+nomodule T/F       // shouldn’t be executed in browsers supporting ES2015 modules
+referrerpolicy     // Specifies which referrer information to send when fetching a script
+src URL            // Specifies the URL of an external script file
+type scripttype    // Specifies the media type of the script
+```
+
+### Media
+
+```js
+border            # 1px solid #ddd
+border-radius        # 4px
+opacity            # 0.5
+```
+
+> style
+
+```js
+background-image: url("photographer.jpg");
+background-repeat: no-repeat, repeat
+background-size: cover, contain
+display: none;
+position: absolute;
+top, left: 25px;
+z-index: 2;
+padding        # space between border and content
+margin            # space between border and surrounding content
+```
+
+### List
+
+```js
+<ul>            # an unordered list
+<ol>            # an ordered list
+<li>            # a list item
+<dl>            # a description list
+<dt>            # a term/name in a description list
+<dd>            # a description of a term/name in a description list
+```
+
+> Table
+
+```js
+<table>      # a table
+<caption>    # a table caption
+<th>         # a header cell in a table
+<tr>         # a row in a table
+<td>         # a cell in a table
+<thead>      # Groups the header content in a table
+<tbody>      # Groups the body content in a table
+<tfoot>      # Groups the footer content in a table
+<col>        # Specifies column properties for each column within a <colgroup> element
+<colgroup>   # Specifies a group of one or more columns in a table for formatting
+```
+
+### Event
+
+> Mouse event
 
 ```sh
 onchange        # HTML element has been changed
@@ -325,6 +710,35 @@ onmouseover     # moves the mouse over an HTML element
 onmouseout      # moves the mouse away from an HTML element
 onkeydown       # pushes a keyboard key
 onload          # browser has finished loading the page
+```
+
+```js
+// html
+<style>
+  html, body { height: 100%; margin: 0; }
+  .screen { height: 100%; background-color: black; display: flex; }
+  .left { background-color: red; }
+  p:hover~.screen { display: var(--arg); }
+</style>
+<p style="--arg: hidden;">show</p>
+<div class="screen"> </div>
+
+// css
+<style>
+#a:hover + #b { background: #ccc }
+</style>
+<div id="a">Div A</div>
+<div id="b">Div B</div>
+```
+
+```js
+:active         // it adds style to active link
+:checked+label  // for radio
+:selected       // for checkbox
+:first-of-type  // first element
+:focus          // selected input with focus (clicked)
+:hover          // when mouse move over it
+:link / visited // add style to unvisited / visited link
 ```
 
 * custom event
@@ -513,12 +927,4 @@ onload          # browser has finished loading the page
 </body>
 
 </html>
-```
-
-# CSS
-
-> Basic Styles
-
-```js
-<link rel="stylesheet" type="text/css" href="theme.css">
 ```

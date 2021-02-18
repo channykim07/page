@@ -10,9 +10,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from .models.team import Team
 from .models.doc import Doc
 from .models.member import Member
-from .models.gist import Gist
 from .models.problem import Problem
-from .models.mock import Mock
 from .database import remote_db, local_db
 from .common import *
 from .app import create_app
