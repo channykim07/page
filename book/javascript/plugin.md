@@ -904,27 +904,6 @@ BoardModel.findAndCountAll({
 })
 ```
 
-* subQuery
-
-```js
-// SELECT *, ( SELECT COUNT(*) FROM reactions AS reaction
-//     WHERE reaction.postId = post.id AND reaction.type = "Laugh") AS laughReactionsCount
-//   FROM posts AS post
-Post.findAll({
-  attributes: {
-    include: [
-      [ // Note the wrapping parentheses in the call below!
-        sequelize.literal(`( SELECT COUNT(*) FROM reactions AS reaction WHERE reaction.postId = post.id AND reaction.type = "Laugh")`),
-        'laughReactionsCount'
-      ]
-    ]
-  },
-  order: [
-    [sequelize.literal('laughReactionsCount'), 'DESC']
-  ]
-});
-```
-
 > LEFT OUTER JOIN
 
 * (defualt)
@@ -1013,19 +992,25 @@ User.findAll({
 * Sequelize help the main (larger query) but you will still have to write that sub-query by yourself
 
 ```js
-// SELECT *, (SELECT COUNT(*) FROM reactions AS reaction
-//            WHERE reaction.postId = post.id AND reaction.type = "Laugh") AS laughReactionsCount
-// FROM posts AS post
 
+* subQuery
+
+```js
+// SELECT *, ( SELECT COUNT(*) FROM reactions AS reaction
+//     WHERE reaction.postId = post.id AND reaction.type = "Laugh") AS laughReactionsCount
+//   FROM posts AS post
 Post.findAll({
   attributes: {
-    include: [[
-        sequelize.literal(`( SELECT COUNT(*)
-                             FROM reactions AS reaction
-                             WHERE reaction.postId = post.id AND reaction.type = "Laugh")`),
-                             'laughReactionsCount'
-      ]]
-  }
+    include: [
+      [ // Note the wrapping parentheses in the call below!
+        sequelize.literal(`( SELECT COUNT(*) FROM reactions AS reaction WHERE reaction.postId = post.id AND reaction.type = "Laugh")`),
+        'laughReactionsCount'
+      ]
+    ]
+  },
+  order: [
+    [sequelize.literal('laughReactionsCount'), 'DESC']
+  ]
 });
 
 // SELECT * FROM characteristic 
