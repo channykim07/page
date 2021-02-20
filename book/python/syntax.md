@@ -372,11 +372,11 @@ decimal.Decimal(0.999592935235).sqrt()
 ```
 
 ```py
-a = input()
+a = int(input())
 if a == 1:
   print("One")
-elif:
-  print("Two")
+elif a == 2 or a == 3:
+  print("Two or Three")
 else:
   print("Too Large")
 ```
