@@ -6,12 +6,13 @@ from firebase_admin import credentials, firestore, initialize_app
 from .models.member import Member
 from .models.team import Team
 from .models.problem import Problem
+from .models.mock import Mock
 from .models.doc import Doc
 from .common import PATH, logger, service_account_credential, html2text
 
 
 def dict2class(collection_id, dict):
-  COLLECTION_ID2CLS = {"member": Member, "team": Team, "problem": Problem, "doc": Doc}
+  COLLECTION_ID2CLS = {"mock": Mock, "member": Member, "team": Team, "problem": Problem, "doc": Doc}
   return COLLECTION_ID2CLS[collection_id](**dict)
 
 
