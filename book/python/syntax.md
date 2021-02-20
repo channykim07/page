@@ -1,6 +1,6 @@
 # Syntax
 
-* computer language is the set of rules
+* syntax is set of rules defined by computer language
 * defines the combinations of symbols that are considered to be correctly structured statements or expressions in that language
 
 ## IO
