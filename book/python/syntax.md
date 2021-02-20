@@ -428,7 +428,8 @@ raise StopExecution
 * [List_2](https://docs.google.com/forms/d/1JOb7wz4EX5AVQ5JjGPFercOH7VgmozrD9d8r4p7NdnQ/edit)
 * [2D](https://docs.google.com/forms/d/1n5pIPsNG1zgzMWEwxq4zJITLHx_fLYJUsOhIDZlLoc0/edit)
 
-* index starts with -1 backward
+* negative index starts from backward (-1 for last element)
+
 ![index](images/20210220_175525.png)
 
 ```py
